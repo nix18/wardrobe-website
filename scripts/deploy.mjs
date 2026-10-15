@@ -7,7 +7,8 @@ import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..')
-const run = (cmd, args, cwd = root) => execFileSync(cmd, args, { cwd, stdio: 'inherit', shell: process.platform === 'win32' })
+// Windows 上 npm 是 npm.cmd，需要经由 shell 调用；git 不经 shell，参数（如含空格的提交说明）原样传入
+const run = (cmd, args, cwd = root) => execFileSync(cmd, args, { cwd, stdio: 'inherit', shell: cmd === 'npm' && process.platform === 'win32' })
 const read = (cmd, args) => execFileSync(cmd, args, { cwd: root, encoding: 'utf8' }).trim()
 
 const remote = read('git', ['remote', 'get-url', 'origin'])
@@ -23,8 +24,9 @@ const work = mkdtempSync(join(tmpdir(), 'pages-'))
 try {
   cpSync(dist, work, { recursive: true })
   run('git', ['init', '-q', '-b', 'gh-pages'], work)
+  run('git', ['config', 'core.autocrlf', 'false'], work)
   run('git', ['add', '-A'], work)
-  run('git', ['-c', 'core.autocrlf=false', 'commit', '-q', '-m', `部署 ${commit}${dirty ? '（含未提交改动）' : ''}`], work)
+  run('git', ['commit', '-q', '-m', `部署 ${commit}${dirty ? '（含未提交改动）' : ''}`], work)
   run('git', ['push', '-q', '-f', remote, 'gh-pages'], work)
 } finally {
   rmSync(work, { recursive: true, force: true })
