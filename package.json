@@ -10,7 +10,8 @@
     "og-image": "node scripts/og-image.mjs",
     "gen-images": "node scripts/gen-images.mjs",
     "release": "node scripts/publish-release.mjs",
-    "deploy": "node scripts/deploy.mjs"
+    "deploy": "node scripts/deploy.mjs",
+    "readme-images": "node scripts/readme-images.mjs docs/readme"
   },
   "engines": {
     "node": ">=22.12.0"

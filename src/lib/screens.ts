@@ -29,7 +29,7 @@ export const screens = {
   search: { src: search, bar: '#FFFFFF' },
   tryOn: { src: tryOn, bar: '#FFFFFF' },
   me: { src: me, bar: paper },
-  drawer: { src: drawer, bar: `linear-gradient(90deg, #FFFFFF 0 74%, ${scrim} 74%)` },
+  drawer: { src: drawer, bar: `linear-gradient(90deg, #FFFFFF 0 76.9%, ${scrim} 76.9%)` },
   addSheet: { src: addSheet, bar: scrim },
   form: { src: form, bar: paper },
   wardrobeDark: { src: wardrobeDark, bar: '#120E0C', dark: true },
