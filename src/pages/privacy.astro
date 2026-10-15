@@ -1,0 +1,56 @@
+---
+import Base from '../layouts/Base.astro'
+import { Content } from '../data/privacy.md'
+---
+
+<Base title="隐私政策" page="privacy" description="小衣柜隐私政策：应用处理哪些信息、发送到哪里，以及如何管理。">
+  <section class="head">
+    <div class="wrap narrow">
+      <span class="eyebrow">Privacy</span>
+      <h1>隐私政策</h1>
+    </div>
+  </section>
+  <section class="body">
+    <article class="wrap narrow prose card">
+      <Content />
+    </article>
+  </section>
+</Base>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-mail]').forEach((el) => {
+    const [user, domain] = el.dataset.mail!.split('|')
+    const a = document.createElement('a')
+    a.href = `mailto:${user}@${domain}`
+    a.textContent = `${user}@${domain}`
+    el.replaceWith(a)
+  })
+</script>
+
+<style>
+  .narrow {
+    width: min(100% - 2 * var(--gutter), 820px);
+  }
+
+  .head {
+    padding-block: clamp(48px, 7vw, 88px) clamp(24px, 4vw, 40px);
+  }
+
+  .head h1 {
+    margin: 16px 0 10px;
+    font-size: clamp(36px, 5vw, 56px);
+  }
+
+  .body {
+    padding-bottom: clamp(48px, 8vw, 96px);
+  }
+
+  .prose {
+    padding: clamp(28px, 5vw, 56px);
+  }
+
+  .prose :global(p:first-of-type) {
+    color: var(--muted);
+    font-size: 14px;
+  }
+</style>

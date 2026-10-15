@@ -1,0 +1,1318 @@
+---
+import { Picture } from 'astro:assets'
+import Base from '../layouts/Base.astro'
+import Phone from '../components/Phone.astro'
+import AiMark from '../components/AiMark.astro'
+import Icon from '../components/Icon.astro'
+import { releases, downloadUrl, formatSize, formatDate } from '../lib/releases'
+
+import { screens as shots } from '../lib/screens'
+
+import coat from '../assets/photos/coat.jpg'
+import dress from '../assets/photos/dress.jpg'
+import bag from '../assets/photos/bag.jpg'
+import model from '../assets/photos/look1.jpg'
+import front from '../assets/photos/look2.jpg'
+import side from '../assets/photos/look2_side.jpg'
+import back from '../assets/photos/look2_back.jpg'
+import aiDark from '../assets/photos/ai_dark.jpg'
+
+const all = await releases()
+const latest = all[0]
+const v = latest.data.version
+
+const screens = [
+  { screen: shots.wardrobe, title: '衣柜', text: '双列瀑布流，照片按原比例展示' },
+  { screen: shots.detail, title: '衣物详情', text: '多张照片、AI 描述与标签' },
+  { screen: shots.search, title: '搜索', text: '标签筛选与自然语言' },
+  { screen: shots.tryOn, title: 'AI 试穿', text: '模特、衣物、动作与视角' },
+  { screen: shots.me, title: '我的', text: '衣橱概览与常用入口' },
+  { screen: shots.drawer, title: '侧边栏', text: '批量导入、分类、AI 服务、同步' },
+  { screen: shots.addSheet, title: '添加衣物', text: '拍照、相册多选、批量导入' },
+  { screen: shots.form, title: '编辑模特', text: '身材数据与云同步设置' },
+  { screen: shots.wardrobeDark, title: '深色模式', text: '同一套设计，夜里也舒服' },
+  { screen: shots.wardrobeDynamic, title: '壁纸取色', text: '整套界面跟随系统配色' },
+  { screen: shots.meDark, title: '我的 · 深色', text: '' },
+]
+
+const details = [
+  { icon: 'layers', title: '多件叠穿', text: '每个部位都能多选，一次最多 8 件。先选的穿在里层，后选的套在外面。' },
+  { icon: 'pose', title: '动作模板', text: '11 个内置动作，也可以用任意照片在本机识别骨骼，生成自己的动作。' },
+  { icon: 'mannequin', title: '你的模特', text: '6 种预置身材，或上传自己的照片生成标准形象；身高、三围可按国标号型推荐。' },
+  { icon: 'face', title: '脸部修复', text: '生成后只重画脸部再贴回，并在本机匀化肤色，多轮生成也不走样。' },
+  { icon: 'duplicate', title: '以图查重', text: '新衣服先拍一张：向量召回候选，再让模型逐一比对，避免买重。' },
+  { icon: 'tag', title: 'AI 生成标识', text: 'AI 图片按 GB 45438-2025 加显式标识，并在文件中写入隐式标识。' },
+] as const
+
+const chatProviders = ['OpenAI', 'Claude', 'Gemini', 'DeepSeek', '通义千问', '智谱 GLM', '豆包', 'Kimi', '硅基流动', 'OpenRouter', 'Ollama']
+const imageProviders = ['豆包 Seedream', '通义千问图像', '通义万相', 'Gemini 图像', 'OpenAI gpt-image', 'OpenRouter']
+
+const faqs = [
+  {
+    q: '小衣柜收费吗？',
+    a: '应用免费。AI 识别和生图由你自己配置的服务商按量计费，费用取决于选用的模型；试穿页会提示这次大约调用几次图像模型。',
+  },
+  {
+    q: '开始使用需要准备什么？',
+    a: '一台 Android 8.0 及以上的手机，以及一个支持图片输入的对话模型（用于识别衣物）。想用 AI 试穿，再添加一个图像生成服务，例如豆包 Seedream 或通义千问图像。',
+  },
+  {
+    q: '我的照片会被上传吗？',
+    a: '小衣柜没有自己的服务器。照片只在你使用 AI 功能时发给你配置的 AI 服务商；开启云同步后，数据同步到你指定的谷歌云盘、WebDAV 或 FTP。',
+  },
+  {
+    q: 'API Key 安全吗？',
+    a: 'API Key 用 Android Keystore 加密保存在本机，不会被同步或备份。换新手机时，在「AI 服务」里重新填写一次即可。',
+  },
+  {
+    q: '有 iPhone 版吗？',
+    a: '目前只有 Android 版。',
+  },
+]
+---
+
+<Base page="home">
+  <!-- ---------------------------------------------------------------- 首屏 -->
+  <section class="hero">
+    <div class="wrap hero-grid">
+      <div class="hero-copy">
+        <span class="eyebrow reveal">Wardrobe, organized by AI</span>
+        <h1 class="reveal" style="--delay: .05s"><span>你的衣柜，</span><span>会整理，也会试穿。</span></h1>
+        <p class="lead reveal" style="--delay: .1s">
+          拍下衣服，AI 自动补全类别、颜色、季节和材质；想穿什么，用一句话就能找到。挑几件搭配、选一位模特，生成正面、侧面、背面三张试穿图。
+        </p>
+        <div class="hero-actions reveal" style="--delay: .15s">
+          <a class="btn btn-primary" href={downloadUrl(v)} data-download>
+            <Icon name="download" size={20} />
+            下载 Android 版
+            <small>v{v} · {formatSize(latest.data.size)}</small>
+          </a>
+          <a class="btn btn-ghost" href={`${import.meta.env.BASE_URL}changelog/`}>
+            更新日志
+            <Icon name="arrow" size={18} />
+          </a>
+        </div>
+        <p class="hero-meta muted reveal" style="--delay: .2s">
+          <span><Icon name="phone" size={16} /> Android 8.0 及以上</span>
+          <span><Icon name="shield" size={16} /> 数据保存在本机</span>
+          <span><Icon name="key" size={16} /> 使用你自己的 AI 服务</span>
+        </p>
+      </div>
+
+      <div class="hero-visual" aria-hidden="true">
+        <div class="hero-photo reveal" style="--delay: .1s">
+          <Picture src={front} alt="" widths={[360, 720]} sizes="360px" formats={['avif', 'webp']} loading="eager" />
+          <AiMark />
+        </div>
+        <Phone screen={shots.wardrobe} alt="" width={262} eager class="hero-phone reveal" />
+        <div class="float-card tags reveal" style="--delay: .35s">
+          <span class="float-title"><Icon name="sparkle" size={15} /> AI 识别完成</span>
+          <div class="chips">
+            <span class="chip chip-clay">外套</span>
+            <span class="chip">驼色</span>
+            <span class="chip">羊毛</span>
+            <span class="chip">秋冬</span>
+            <span class="chip">通勤</span>
+          </div>
+        </div>
+        <div class="float-card views reveal" style="--delay: .45s">
+          {
+            [front, side, back].map((img) => (
+              <Picture src={img} alt="" widths={[120]} sizes="60px" formats={['avif', 'webp']} />
+            ))
+          }
+          <span>三视图</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ---------------------------------------------------------------- 三项主要功能 -->
+  <section id="features" class="section features">
+    <div class="wrap">
+      <div class="feature">
+        <div class="feature-copy reveal">
+          <span class="eyebrow">01 · 整理</span>
+          <h2>拍一张，标签自动补全</h2>
+          <p>
+            拍照或从相册导入，多模态大模型识别类别、颜色、季节、材质和风格，并写好一句描述。批量导入时在后台同时识别，失败的可以一键重试。
+          </p>
+          <ul class="checks">
+            <li><Icon name="check" size={18} />一件衣服可以同时属于多个类别，类别、风格、存放位置都能自定义</li>
+            <li><Icon name="check" size={18} />记录品牌、尺码、价格、备注，常穿的加上收藏</li>
+            <li><Icon name="check" size={18} />识图、查重、搜索可以分别指定不同的 AI 服务</li>
+          </ul>
+        </div>
+        <div class="feature-visual tone-sand reveal" style="--delay: .1s">
+          <Phone screen={shots.detail} alt="衣物详情：驼色双排扣羊毛大衣，带 AI 描述与标签" width={268} />
+          <div class="side-stack">
+            <div class="photo-tile"><Picture src={dress} alt="酒红色碎花吊带连衣裙" widths={[200, 400]} sizes="150px" formats={['avif', 'webp']} /></div>
+            <div class="photo-tile"><Picture src={bag} alt="焦糖色皮质托特包" widths={[200, 400]} sizes="150px" formats={['avif', 'webp']} /></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="feature flip">
+        <div class="feature-copy reveal">
+          <span class="eyebrow">02 · 查找</span>
+          <h2>想穿什么，说出来就行</h2>
+          <p>
+            输入“秋冬通勤穿的外套”，描述会被理解成季节、场合等标签条件，再结合本地向量索引排序。也可以按类别、风格、存放位置组合筛选，只看收藏。
+          </p>
+          <ul class="checks">
+            <li><Icon name="check" size={18} />本地离线索引，搜索不依赖网络；可选远程 Embedding</li>
+            <li><Icon name="check" size={18} />以图查重：先召回相似候选，再让模型逐一比对是不是同一件</li>
+          </ul>
+        </div>
+        <div class="feature-visual tone-mist reveal" style="--delay: .1s">
+          <Phone screen={shots.search} alt="搜索：用自然语言找到秋冬通勤的外套" width={268} />
+          <div class="query-card">
+            <span class="muted">你说</span>
+            <strong>“秋冬通勤穿的外套”</strong>
+            <span class="muted">理解为</span>
+            <div class="chips">
+              <span class="chip chip-clay">季节：秋冬</span>
+              <span class="chip chip-clay">场合：通勤</span>
+              <span class="chip">类别：外套</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="feature tryon">
+        <div class="feature-copy reveal">
+          <span class="eyebrow">03 · 试穿</span>
+          <h2>挑几件衣服，看它穿在身上</h2>
+          <p>
+            选好模特和衣物，先生成正面，再参考正面生成侧面与背面，三张图里的衣物细节保持一致。生成在后台排队进行，离开页面也不会中断。
+          </p>
+        </div>
+        <div class="flow reveal" style="--delay: .1s">
+          <div class="flow-inputs">
+            <div class="flow-group">
+              <span class="flow-label">衣物</span>
+              <div class="flow-garments">
+                {
+                  [
+                    { src: coat, alt: '驼色大衣' },
+                    { src: dress, alt: '酒红长裙' },
+                    { src: bag, alt: '焦糖色托特包' },
+                  ].map((g) => (
+                    <div class="photo-tile small">
+                      <Picture src={g.src} alt={g.alt} widths={[180, 360]} sizes="110px" formats={['avif', 'webp']} />
+                    </div>
+                  ))
+                }
+              </div>
+            </div>
+            <span class="flow-plus" aria-hidden="true">+</span>
+            <div class="flow-group">
+              <span class="flow-label">模特</span>
+              <div class="photo-tile model">
+                <Picture src={model} alt="模特形象" widths={[180, 360]} sizes="140px" formats={['avif', 'webp']} />
+                <AiMark />
+              </div>
+            </div>
+          </div>
+          <div class="flow-arrow" aria-hidden="true"><Icon name="arrow" size={28} /></div>
+          <div class="flow-views">
+            {
+              [
+                { src: front, label: '正面' },
+                { src: side, label: '侧面' },
+                { src: back, label: '背面' },
+              ].map((view) => (
+                <figure>
+                  <div class="photo-tile view">
+                    <Picture src={view.src} alt={`试穿效果：${view.label}`} widths={[260, 520]} sizes="(max-width: 760px) 30vw, 200px" formats={['avif', 'webp']} />
+                    <AiMark />
+                  </div>
+                  <figcaption>{view.label}</figcaption>
+                </figure>
+              ))
+            }
+          </div>
+        </div>
+        <div class="detail-grid">
+          {
+            details.map((d, i) => (
+              <div class="detail card reveal" style={`--delay: ${i * 0.05}s`}>
+                <span class="detail-icon">
+                  <Icon name={d.icon} size={22} />
+                </span>
+                <h3>{d.title}</h3>
+                <p>{d.text}</p>
+              </div>
+            ))
+          }
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ---------------------------------------------------------------- 数据与隐私 -->
+  <section class="section privacy-band">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <span class="eyebrow">Your data, your device</span>
+        <h2>衣柜是你的，数据也是</h2>
+        <p>小衣柜没有自己的服务器。衣物、照片和试穿记录保存在手机里，想在多台设备上用，就同步到你自己的网盘。</p>
+      </div>
+      <div class="trust-grid">
+        <div class="trust card reveal">
+          <Icon name="phone" size={26} />
+          <h3>本地优先</h3>
+          <p>所有数据默认只在本机。卸载应用即删除全部本地数据；也可以随时导出 zip 备份。</p>
+        </div>
+        <div class="trust card reveal" style="--delay: .05s">
+          <Icon name="key" size={26} />
+          <h3>自带 AI 服务</h3>
+          <p>填写你自己的 API Key，加密保存在本机，不会被同步或备份。只有使用 AI 功能时，照片才会发给你选的服务商。</p>
+        </div>
+        <div class="trust card reveal" style="--delay: .1s">
+          <Icon name="sync" size={26} />
+          <h3>多端同步</h3>
+          <p>谷歌云盘、WebDAV（坚果云、Nextcloud、群晖）、FTP/FTPS。改动后自动在后台同步，换手机登录同一账号即可。</p>
+        </div>
+      </div>
+      <div class="providers reveal">
+        <div>
+          <span class="providers-label">识图与搜索</span>
+          <div class="chips">{chatProviders.map((p) => <span class="chip">{p}</span>)}</div>
+        </div>
+        <div>
+          <span class="providers-label">图像生成</span>
+          <div class="chips">{imageProviders.map((p) => <span class="chip">{p}</span>)}</div>
+        </div>
+        <p class="muted small">兼容 OpenAI Chat Completions、Responses 与 Anthropic Messages 接口，可自定义地址、模型与请求参数；提示词模板可以逐个修改。</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ---------------------------------------------------------------- 界面：向下滚动时截图横向移动，到最后一张后继续向下 -->
+  <section id="screens" class="screens">
+    <div class="hs-sticky">
+      <div class="wrap">
+        <div class="section-head reveal">
+          <span class="eyebrow">Designed to stay out of the way</span>
+          <h2>界面克制，让衣服成为主角</h2>
+          <p>浅灰画布上的白色圆角卡片，陶土色只用在选中、收藏和主要按钮上。支持深色模式，也能跟随系统壁纸取色。</p>
+        </div>
+      </div>
+      <div class="gallery" aria-label="应用界面截图">
+        <div class="gallery-track">
+          {
+            screens.map((s) => (
+              <figure class="shot">
+                <Phone screen={s.screen} alt={s.text ? `${s.title}：${s.text}` : s.title} width={250} fluid />
+                <figcaption>
+                  <strong>{s.title}</strong>
+                  {s.text && <span>{s.text}</span>}
+                </figcaption>
+              </figure>
+            ))
+          }
+        </div>
+      </div>
+      <div class="wrap">
+        <div class="hs-progress" aria-hidden="true"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ---------------------------------------------------------------- 最近更新 -->
+  <section class="section updates">
+    <div class="wrap updates-grid">
+      <div class="section-head reveal">
+        <span class="eyebrow">Release notes</span>
+        <h2>持续更新</h2>
+        <a class="btn btn-ghost" href={`${import.meta.env.BASE_URL}changelog/`}>
+          全部更新日志
+          <Icon name="arrow" size={18} />
+        </a>
+      </div>
+      <ol class="timeline">
+        {
+          all.slice(0, 4).map((r, i) => (
+            <li class="reveal" style={`--delay: ${i * 0.06}s`}>
+              <a href={`${import.meta.env.BASE_URL}changelog/#v${r.data.version}`}>
+                <div class="tl-head">
+                  <strong>v{r.data.version}</strong>
+                  {i === 0 && <span class="chip chip-clay">最新</span>}
+                  <time datetime={r.data.date.toISOString()} class="muted">
+                    {formatDate(r.data.date)}
+                  </time>
+                </div>
+                <p>{r.data.summary}</p>
+              </a>
+            </li>
+          ))
+        }
+      </ol>
+    </div>
+  </section>
+
+  <!-- ---------------------------------------------------------------- 常见问题 -->
+  <section id="faq" class="section faq">
+    <div class="wrap faq-grid">
+      <div class="section-head reveal">
+        <span class="eyebrow">FAQ</span>
+        <h2>常见问题</h2>
+      </div>
+      <div class="faq-list">
+        {
+          faqs.map((f) => (
+            <details class="reveal">
+              <summary>{f.q}</summary>
+              <p>{f.a}</p>
+            </details>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- ---------------------------------------------------------------- 下载 -->
+  <section class="cta-band">
+    <div class="wrap cta-inner reveal">
+      <div class="cta-photo" aria-hidden="true">
+        <Picture src={aiDark} alt="" widths={[260, 520]} sizes="220px" formats={['avif', 'webp']} />
+        <AiMark dark />
+      </div>
+      <div class="cta-copy">
+        <h2>把整个衣柜，装进手机。</h2>
+        <p>免费下载，使用你自己的 AI 服务。</p>
+        <div class="hero-actions">
+          <a class="btn btn-primary" href={downloadUrl(v)} data-download>
+            <Icon name="download" size={20} />
+            下载 v{v}
+            <small>{formatSize(latest.data.size)}</small>
+          </a>
+          <a class="btn btn-ghost on-dark" href={`${import.meta.env.BASE_URL}download/`}>安装说明</a>
+        </div>
+      </div>
+    </div>
+  </section>
+</Base>
+
+<script>
+  // 界面截图：区块固定在顶栏下方，页面向下滚动的距离换算成截图的横向位移，滑到最后一张后解除固定、继续向下。
+  // 不支持脚本或偏好减少动态效果时，保持原生的横向滑动。
+  const section = document.querySelector<HTMLElement>('.screens')
+  const sticky = section?.querySelector<HTMLElement>('.hs-sticky')
+  const track = section?.querySelector<HTMLElement>('.gallery-track')
+  const bar = section?.querySelector<HTMLElement>('.hs-progress')
+  if (section && sticky && track && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    section.classList.add('hs-on')
+    let distance = 0
+    let pinTop = 0
+    const update = () => {
+      const progress = distance > 0 ? Math.min(1, Math.max(0, (pinTop - section.getBoundingClientRect().top) / distance)) : 0
+      track.style.transform = `translate3d(${(-progress * distance).toFixed(1)}px, 0, 0)`
+      bar?.style.setProperty('--p', progress.toFixed(4))
+    }
+    const layout = () => {
+      distance = Math.max(0, track.scrollWidth - document.documentElement.clientWidth)
+      pinTop = parseFloat(getComputedStyle(sticky).top) || 0
+      section.style.height = `${sticky.offsetHeight + distance}px`
+      update()
+    }
+    let queued = false
+    addEventListener(
+      'scroll',
+      () => {
+        if (queued) return
+        queued = true
+        requestAnimationFrame(() => {
+          queued = false
+          update()
+        })
+      },
+      { passive: true },
+    )
+    addEventListener('resize', layout)
+    new ResizeObserver(layout).observe(track)
+    layout()
+  }
+</script>
+
+<style>
+  /* ---------------------------------------------------------------- 首屏 */
+  .hero {
+    position: relative;
+    overflow: hidden;
+    padding-block: clamp(40px, 6vw, 72px) clamp(64px, 8vw, 104px);
+  }
+
+  .hero::before {
+    content: '';
+    position: absolute;
+    inset: -20% -10% auto auto;
+    width: 760px;
+    height: 760px;
+    border-radius: 50%;
+    background: radial-gradient(closest-side, color-mix(in srgb, var(--clay) 14%, transparent), transparent);
+    pointer-events: none;
+  }
+
+  .hero-grid {
+    position: relative;
+    display: grid;
+    grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
+    align-items: center;
+    gap: clamp(32px, 5vw, 72px);
+  }
+
+  .hero-copy {
+    display: grid;
+    gap: 26px;
+  }
+
+  .hero h1 {
+    font-size: clamp(36px, 5vw, 66px);
+    line-height: 1.12;
+    letter-spacing: -0.035em;
+  }
+
+  .hero h1 span {
+    display: block;
+    white-space: nowrap;
+  }
+
+  .lead {
+    max-width: 34em;
+    color: var(--ink-2);
+    font-size: clamp(17px, 1.6vw, 19px);
+  }
+
+  .hero-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .hero-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 22px;
+    font-size: 14px;
+  }
+
+  .hero-meta span {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .hero-visual {
+    position: relative;
+    height: 620px;
+  }
+
+  .hero-photo {
+    position: absolute;
+    top: 10px;
+    right: 0;
+    width: 64%;
+    aspect-ratio: 3 / 4;
+    overflow: hidden;
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow);
+  }
+
+  .hero-photo :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  :global(.hero-phone) {
+    position: absolute !important;
+    left: 2%;
+    bottom: 0;
+    rotate: -4deg;
+  }
+
+  .float-card {
+    position: absolute;
+    display: grid;
+    gap: 10px;
+    padding: 14px 16px;
+    border-radius: var(--radius);
+    background: color-mix(in srgb, var(--card) 88%, transparent);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    box-shadow: var(--shadow);
+  }
+
+  .float-title {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--clay-ink);
+    font-size: 13px;
+    font-weight: 600;
+  }
+
+  .chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .float-card.tags {
+    right: 6%;
+    bottom: 8px;
+    width: 236px;
+  }
+
+  .float-card.views {
+    top: 7%;
+    right: -3%;
+    grid-auto-flow: column;
+    align-items: end;
+    gap: 6px;
+    padding: 10px;
+  }
+
+  .float-card.views :global(img) {
+    width: 46px;
+    height: 62px;
+    object-fit: cover;
+    border-radius: 8px;
+  }
+
+  .float-card.views span {
+    writing-mode: vertical-rl;
+    color: var(--muted);
+    font-size: 12px;
+    letter-spacing: 0.2em;
+  }
+
+  @media (max-width: 960px) {
+    .hero-grid {
+      grid-template-columns: 1fr;
+    }
+    .hero-visual {
+      height: 560px;
+      max-width: 560px;
+      width: 100%;
+      margin-inline: auto;
+    }
+  }
+
+  @media (max-width: 520px) {
+    .hero-visual {
+      height: 470px;
+    }
+    :global(.hero-phone) {
+      --phone-w: 200px !important;
+    }
+    .float-card.tags {
+      width: 200px;
+      bottom: 24px;
+    }
+    .float-card.views {
+      display: none;
+    }
+  }
+
+  /* ---------------------------------------------------------------- 主要功能 */
+  .feature {
+    display: grid;
+    grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+    align-items: center;
+    gap: clamp(32px, 6vw, 88px);
+  }
+
+  .feature + .feature {
+    margin-top: clamp(96px, 12vw, 160px);
+  }
+
+  .feature.flip {
+    grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+  }
+
+  .feature.flip .feature-copy {
+    order: 2;
+  }
+
+  .feature-copy {
+    display: grid;
+    gap: 20px;
+  }
+
+  .feature-copy h2 {
+    font-size: clamp(30px, 3.8vw, 44px);
+  }
+
+  .feature-copy > p {
+    color: var(--ink-2);
+    font-size: 17px;
+  }
+
+  .checks {
+    display: grid;
+    gap: 12px;
+    margin: 6px 0 0;
+    padding: 0;
+    list-style: none;
+    color: var(--ink-2);
+  }
+
+  .checks li {
+    display: grid;
+    grid-template-columns: 22px 1fr;
+    gap: 8px;
+  }
+
+  .checks :global(svg) {
+    margin-top: 4px;
+    color: var(--clay);
+  }
+
+  .feature-visual {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 22px;
+    min-height: 560px;
+    padding: 48px 32px;
+    border-radius: var(--radius-xl);
+  }
+
+  .tone-sand {
+    background: var(--sand);
+  }
+
+  .tone-mist {
+    background: var(--mist);
+  }
+
+  .side-stack {
+    display: grid;
+    gap: 18px;
+  }
+
+  .photo-tile {
+    position: relative;
+    overflow: hidden;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    background: var(--card);
+  }
+
+  .photo-tile :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .side-stack .photo-tile {
+    width: 150px;
+    aspect-ratio: 3 / 4;
+  }
+
+  .side-stack .photo-tile:first-child {
+    translate: 0 -18px;
+    rotate: 3deg;
+  }
+
+  .side-stack .photo-tile:last-child {
+    aspect-ratio: 1;
+    rotate: -3deg;
+  }
+
+  .query-card {
+    position: absolute;
+    left: 6%;
+    bottom: 12%;
+    display: grid;
+    gap: 6px;
+    width: 230px;
+    padding: 18px;
+    border-radius: var(--radius);
+    background: var(--card);
+    box-shadow: var(--shadow);
+    font-size: 13px;
+  }
+
+  .query-card strong {
+    margin-bottom: 6px;
+    font-size: 17px;
+  }
+
+  @media (max-width: 900px) {
+    .feature,
+    .feature.flip {
+      grid-template-columns: 1fr;
+    }
+    .feature.flip .feature-copy {
+      order: 0;
+    }
+    .query-card {
+      position: static;
+      width: auto;
+    }
+    .tone-mist {
+      flex-direction: column;
+    }
+  }
+
+  @media (max-width: 520px) {
+    .feature-visual {
+      padding: 32px 16px;
+      min-height: 0;
+    }
+    .feature-visual :global(.phone) {
+      --phone-w: 210px !important;
+    }
+    .side-stack .photo-tile {
+      width: 104px;
+    }
+  }
+
+  /* 试穿流程 */
+  .feature.tryon {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 40px;
+  }
+
+  .feature.tryon .feature-copy {
+    max-width: 640px;
+  }
+
+  .flow {
+    display: grid;
+    grid-template-columns: auto auto 1fr;
+    align-items: center;
+    gap: clamp(16px, 3vw, 36px);
+    padding: clamp(24px, 4vw, 48px);
+    border-radius: var(--radius-xl);
+    background: var(--card);
+    box-shadow: var(--shadow-sm);
+  }
+
+  .flow-inputs {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .flow-group {
+    display: grid;
+    gap: 10px;
+  }
+
+  .flow-label {
+    color: var(--muted);
+    font-size: 13px;
+    letter-spacing: 0.12em;
+  }
+
+  .flow-garments {
+    display: grid;
+    grid-template-columns: repeat(3, 72px);
+    gap: 10px;
+  }
+
+  .photo-tile.small {
+    aspect-ratio: 3 / 4;
+    border-radius: 12px;
+    box-shadow: var(--shadow-sm);
+  }
+
+  .photo-tile.model {
+    width: 120px;
+    aspect-ratio: 3 / 4;
+    border-radius: 14px;
+    box-shadow: var(--shadow-sm);
+  }
+
+  .photo-tile.model :global(.ai-mark),
+  .photo-tile.view :global(.ai-mark) {
+    font-size: 10px;
+  }
+
+  .flow-plus {
+    margin-top: 22px;
+    color: var(--muted);
+    font-size: 26px;
+    font-weight: 300;
+  }
+
+  .flow-arrow {
+    display: grid;
+    place-items: center;
+    width: 56px;
+    height: 56px;
+    margin-top: 22px;
+    border-radius: 50%;
+    background: var(--clay);
+    color: var(--on-clay);
+    box-shadow: 0 12px 24px -12px rgb(184 90 53 / 0.9);
+  }
+
+  .flow-views {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: clamp(10px, 1.6vw, 18px);
+  }
+
+  .flow-views figure {
+    display: grid;
+    gap: 10px;
+    margin: 0;
+  }
+
+  .photo-tile.view {
+    aspect-ratio: 3 / 4;
+  }
+
+  .flow-views figcaption {
+    color: var(--ink-2);
+    font-size: 14px;
+    text-align: center;
+  }
+
+  @media (max-width: 1000px) {
+    .flow {
+      grid-template-columns: 1fr;
+      justify-items: center;
+    }
+    .flow-arrow {
+      margin-top: 0;
+      rotate: 90deg;
+    }
+    .flow-plus {
+      margin-top: 22px;
+    }
+    .flow-views {
+      width: 100%;
+    }
+  }
+
+  @media (max-width: 520px) {
+    .flow {
+      padding: 22px 16px;
+    }
+    .flow-inputs {
+      gap: 10px;
+    }
+    .flow-garments {
+      grid-template-columns: repeat(3, 52px);
+      gap: 8px;
+    }
+    .photo-tile.model {
+      width: 92px;
+    }
+  }
+
+  .detail-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 16px;
+  }
+
+  .detail {
+    display: grid;
+    align-content: start;
+    gap: 10px;
+    padding: 26px;
+  }
+
+  .detail-icon {
+    display: grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    margin-bottom: 6px;
+    border-radius: 14px;
+    background: var(--clay-soft);
+    color: var(--clay-ink);
+  }
+
+  .detail h3 {
+    font-size: 18px;
+    letter-spacing: 0;
+  }
+
+  .detail p {
+    color: var(--ink-2);
+    font-size: 15px;
+  }
+
+  @media (max-width: 900px) {
+    .detail-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media (max-width: 560px) {
+    .detail-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  /* ---------------------------------------------------------------- 数据与隐私 */
+  .privacy-band {
+    background: var(--paper-2);
+  }
+
+  .trust-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 16px;
+  }
+
+  .trust {
+    display: grid;
+    align-content: start;
+    gap: 12px;
+    padding: 30px;
+  }
+
+  .trust :global(svg) {
+    color: var(--clay);
+  }
+
+  .trust h3 {
+    font-size: 20px;
+    letter-spacing: 0;
+  }
+
+  .trust p {
+    color: var(--ink-2);
+    font-size: 15px;
+  }
+
+  .providers {
+    display: grid;
+    gap: 18px;
+    margin-top: 40px;
+    padding-top: 32px;
+    border-top: 1px solid var(--line);
+  }
+
+  .providers > div {
+    display: grid;
+    grid-template-columns: 110px 1fr;
+    align-items: start;
+    gap: 16px;
+  }
+
+  .providers-label {
+    padding-top: 4px;
+    color: var(--muted);
+    font-size: 14px;
+  }
+
+  .providers .chip {
+    background: var(--card);
+    box-shadow: inset 0 0 0 1px var(--line);
+  }
+
+  .small {
+    font-size: 14px;
+  }
+
+  @media (max-width: 760px) {
+    .trust-grid {
+      grid-template-columns: 1fr;
+    }
+    .providers > div {
+      grid-template-columns: 1fr;
+      gap: 8px;
+    }
+  }
+
+  /* ---------------------------------------------------------------- 界面 */
+  .screens {
+    position: relative;
+    padding-top: clamp(72px, 10vw, 128px);
+  }
+
+  .hs-sticky {
+    padding-bottom: clamp(56px, 8vw, 104px);
+  }
+
+  .gallery {
+    --phone-w: 248px;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+
+  .gallery::-webkit-scrollbar {
+    display: none;
+  }
+
+  .gallery-track {
+    display: flex;
+    gap: clamp(20px, 3vw, 40px);
+    width: max-content;
+    padding: 12px max(var(--gutter), calc((100vw - var(--wrap)) / 2)) 28px;
+    will-change: transform;
+  }
+
+  .shot {
+    display: grid;
+    gap: 16px;
+    margin: 0;
+  }
+
+  .shot figcaption {
+    display: grid;
+    gap: 2px;
+    padding-inline: 6px;
+  }
+
+  .shot figcaption strong {
+    font-size: 16px;
+  }
+
+  .shot figcaption span {
+    color: var(--muted);
+    font-size: 14px;
+  }
+
+  .hs-progress {
+    display: none;
+    height: 2px;
+    overflow: hidden;
+    border-radius: 2px;
+    background: var(--line);
+  }
+
+  .hs-progress::after {
+    content: '';
+    display: block;
+    height: 100%;
+    background: var(--clay);
+    transform-origin: left;
+    scale: var(--p, 0) 1;
+  }
+
+  /* 脚本接管后：固定在顶栏下方，高度为一屏，截图大小随屏幕高度调整 */
+  .screens.hs-on {
+    padding-top: clamp(24px, 4vw, 48px);
+  }
+
+  .screens.hs-on .hs-sticky {
+    position: sticky;
+    top: 72px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    height: calc(100svh - 72px);
+    padding-bottom: 0;
+    overflow: hidden;
+  }
+
+  .screens.hs-on .section-head {
+    margin-bottom: clamp(16px, 3svh, 36px);
+  }
+
+  .screens.hs-on .gallery {
+    --phone-w: clamp(150px, calc((100svh - 430px) / 2.2), 250px);
+    overflow: visible;
+  }
+
+  .screens.hs-on .hs-progress {
+    display: block;
+  }
+
+  /* ---------------------------------------------------------------- 最近更新 */
+  .updates-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
+    gap: clamp(32px, 6vw, 88px);
+  }
+
+  .updates .section-head {
+    align-content: start;
+    justify-items: start;
+  }
+
+  .timeline {
+    display: grid;
+    gap: 12px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .timeline a {
+    display: grid;
+    gap: 8px;
+    padding: 22px 26px;
+    border-radius: var(--radius-lg);
+    background: var(--card);
+    box-shadow: var(--shadow-sm);
+    transition:
+      translate 0.25s ease,
+      box-shadow 0.25s ease;
+  }
+
+  .timeline a:hover {
+    translate: 4px 0;
+    box-shadow: var(--shadow);
+  }
+
+  .tl-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .tl-head strong {
+    font-size: 18px;
+  }
+
+  .tl-head time {
+    margin-left: auto;
+    font-size: 14px;
+  }
+
+  .timeline p {
+    color: var(--ink-2);
+  }
+
+  @media (max-width: 860px) {
+    .updates-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  /* ---------------------------------------------------------------- 常见问题 */
+  .faq-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
+    gap: clamp(32px, 6vw, 88px);
+  }
+
+  .faq .section-head {
+    align-content: start;
+  }
+
+  .faq-list {
+    border-top: 1px solid var(--line);
+  }
+
+  details {
+    border-bottom: 1px solid var(--line);
+  }
+
+  summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 22px 4px;
+    font-size: 17px;
+    font-weight: 600;
+    cursor: pointer;
+    list-style: none;
+  }
+
+  summary::-webkit-details-marker {
+    display: none;
+  }
+
+  summary::after {
+    content: '+';
+    color: var(--clay);
+    font-size: 24px;
+    font-weight: 300;
+    transition: rotate 0.25s ease;
+  }
+
+  details[open] summary::after {
+    rotate: 45deg;
+  }
+
+  details p {
+    padding: 0 4px 24px;
+    color: var(--ink-2);
+  }
+
+  @media (max-width: 860px) {
+    .faq-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  /* ---------------------------------------------------------------- 下载 */
+  .cta-band {
+    padding-block: 0 clamp(40px, 6vw, 72px);
+  }
+
+  .cta-inner {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    align-items: center;
+    gap: clamp(28px, 5vw, 64px);
+    padding: clamp(32px, 5vw, 56px);
+    border-radius: var(--radius-xl);
+    background: #2a2522;
+    color: #f6efe8;
+  }
+
+  .cta-photo {
+    position: relative;
+    width: 200px;
+    aspect-ratio: 2 / 3;
+    overflow: hidden;
+    border-radius: var(--radius-lg);
+    rotate: -3deg;
+    box-shadow: 0 30px 60px -30px rgb(0 0 0 / 0.8);
+  }
+
+  .cta-photo :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .cta-copy {
+    display: grid;
+    gap: 18px;
+  }
+
+  .cta-copy h2 {
+    font-size: clamp(30px, 4.4vw, 52px);
+  }
+
+  .cta-copy p {
+    color: #cfc4b9;
+    font-size: 17px;
+  }
+
+  .cta-copy .btn-primary {
+    background: #c96a43;
+    color: #fffaf6;
+  }
+
+  .cta-copy .btn-primary:hover {
+    background: #d77b54;
+  }
+
+  .on-dark {
+    color: #f6efe8;
+    box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.2);
+  }
+
+  .on-dark:hover {
+    background: rgb(255 255 255 / 0.08);
+  }
+
+  @media (max-width: 720px) {
+    .cta-inner {
+      grid-template-columns: 1fr;
+    }
+    .cta-photo {
+      width: 150px;
+    }
+  }
+</style>

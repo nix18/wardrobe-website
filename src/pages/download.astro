@@ -1,0 +1,311 @@
+---
+import { render } from 'astro:content'
+import Base from '../layouts/Base.astro'
+import Logo from '../components/Logo.astro'
+import Icon from '../components/Icon.astro'
+import { latest as latestRelease, downloadUrl, releaseUrl, formatSize, formatDate, apkName } from '../lib/releases'
+
+const latest = await latestRelease()
+const v = latest.data.version
+const { Content } = await render(latest)
+---
+
+<Base title="下载" page="download" description={`下载小衣柜 v${v}（Android 8.0 及以上，${formatSize(latest.data.size)}）。安装步骤与校验方法。`}>
+  <section class="dl-hero">
+    <div class="wrap">
+      <span class="eyebrow">Download</span>
+      <h1>下载小衣柜</h1>
+      <p class="muted">适用于 Android 8.0 及以上的手机与平板。免费，使用你自己的 AI 服务。</p>
+
+      <div class="latest card">
+        <div class="latest-main">
+          <Logo size={64} />
+          <div class="latest-info">
+            <div class="latest-title">
+              <h2>小衣柜 v{v}</h2>
+              <span class="chip chip-clay">最新版本</span>
+            </div>
+            <p class="muted">
+              <time datetime={latest.data.date.toISOString()}>{formatDate(latest.data.date)}</time> 发布 · {formatSize(latest.data.size)} · Android 8.0+
+            </p>
+            <p>{latest.data.summary}</p>
+          </div>
+          <a class="btn btn-primary dl-btn" href={downloadUrl(v)} data-download>
+            <Icon name="download" size={20} />
+            下载 APK
+          </a>
+        </div>
+        <div class="hash">
+          <span class="muted">SHA-256</span>
+          <code id="sha">{latest.data.sha256}</code>
+          <button type="button" class="copy" data-copy="#sha" aria-label="复制 SHA-256">
+            <Icon name="copy" size={16} />
+            <span>复制</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section-sm">
+    <div class="wrap two-col">
+      <div>
+        <h2 class="h-sm">安装步骤</h2>
+        <ol class="steps">
+          <li>
+            <strong>下载安装包</strong>
+            <p>在手机浏览器中点击上方的“下载 APK”，文件名为 <code>{apkName(v)}</code>。</p>
+          </li>
+          <li>
+            <strong>允许安装</strong>
+            <p>打开下载的文件，系统提示时允许浏览器或文件管理器“安装未知应用”，再点“安装”。</p>
+          </li>
+          <li>
+            <strong>配置 AI 服务</strong>
+            <p>首次打开同意隐私政策后，在「设置 › AI 服务」选择服务商、填写 API Key，点“测试连接”。想用 AI 试穿，再添加一个图像生成服务。</p>
+          </li>
+        </ol>
+      </div>
+      <div>
+        <h2 class="h-sm">校验安装包</h2>
+        <p class="muted">下载后可以核对 SHA-256，确认文件完整、没有被篡改：</p>
+        <pre><code><span class="muted"># Windows</span>
+certutil -hashfile {apkName(v)} SHA256
+<span class="muted"># macOS / Linux</span>
+shasum -a 256 {apkName(v)}</code></pre>
+        <a class="link" href={`${import.meta.env.BASE_URL}download/history/`}>需要旧版本？查看历史版本 <Icon name="arrow" size={16} /></a>
+      </div>
+    </div>
+  </section>
+
+  <section class="section-sm">
+    <div class="wrap two-col">
+      <div>
+        <h2 class="h-sm">v{v} 更新内容</h2>
+        <a class="link" href={releaseUrl(v)}>在 GitHub 上查看 <Icon name="arrow" size={16} /></a>
+      </div>
+      <article class="prose card notes">
+        <Content />
+      </article>
+    </div>
+  </section>
+
+</Base>
+
+<script>
+  document.querySelectorAll<HTMLButtonElement>('[data-copy]').forEach((button) => {
+    button.addEventListener('click', async () => {
+      const text = document.querySelector(button.dataset.copy!)?.textContent ?? ''
+      try {
+        await navigator.clipboard.writeText(text)
+        const label = button.querySelector('span')!
+        label.textContent = '已复制'
+        setTimeout(() => (label.textContent = '复制'), 1600)
+      } catch {
+        // 不支持剪贴板时选中文字，便于手动复制
+        const range = document.createRange()
+        range.selectNodeContents(document.querySelector(button.dataset.copy!)!)
+        getSelection()?.removeAllRanges()
+        getSelection()?.addRange(range)
+      }
+    })
+  })
+</script>
+
+<style>
+  .dl-hero {
+    padding-block: clamp(48px, 7vw, 88px) 32px;
+  }
+
+  .dl-hero h1 {
+    margin: 16px 0 10px;
+    font-size: clamp(36px, 5vw, 56px);
+  }
+
+  .latest {
+    margin-top: 40px;
+    padding: clamp(24px, 4vw, 40px);
+    border-radius: var(--radius-xl);
+  }
+
+  .latest-main {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
+    gap: 24px;
+  }
+
+  .latest-main :global(svg) {
+    border-radius: 18px;
+    box-shadow: 0 14px 28px -14px rgb(184 90 53 / 0.9);
+  }
+
+  .latest-info {
+    display: grid;
+    gap: 6px;
+  }
+
+  .latest-title {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .latest-title h2 {
+    font-size: 26px;
+  }
+
+  .dl-btn {
+    height: 56px;
+    padding-inline: 32px;
+  }
+
+  .hash {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px 14px;
+    margin-top: 28px;
+    padding-top: 20px;
+    border-top: 1px solid var(--line);
+    font-size: 13px;
+  }
+
+  .hash code {
+    flex: 1;
+    min-width: 0;
+    padding: 0;
+    background: none;
+    overflow-wrap: anywhere;
+    color: var(--ink-2);
+    font: 13px/1.5 var(--mono);
+  }
+
+  .copy {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    height: 34px;
+    padding: 0 14px;
+    border: 0;
+    border-radius: 999px;
+    background: var(--paper-2);
+    color: var(--ink-2);
+    font: inherit;
+    cursor: pointer;
+  }
+
+  .copy:hover {
+    background: var(--clay-soft);
+    color: var(--clay-ink);
+  }
+
+  @media (max-width: 720px) {
+    .latest-main {
+      grid-template-columns: auto 1fr;
+    }
+    .dl-btn {
+      grid-column: 1 / -1;
+    }
+  }
+
+  .section-sm {
+    padding-block: clamp(32px, 5vw, 56px);
+  }
+
+  .two-col {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: clamp(32px, 5vw, 64px);
+  }
+
+  .h-sm {
+    margin-bottom: 20px;
+    font-size: 24px;
+  }
+
+  .steps {
+    display: grid;
+    gap: 22px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    counter-reset: step;
+  }
+
+  .steps li {
+    display: grid;
+    grid-template-columns: 40px 1fr;
+    column-gap: 16px;
+    counter-increment: step;
+  }
+
+  .steps li::before {
+    content: counter(step);
+    grid-row: span 2;
+    display: grid;
+    place-items: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: var(--clay-soft);
+    color: var(--clay-ink);
+    font-weight: 700;
+  }
+
+  .steps p {
+    color: var(--ink-2);
+  }
+
+  .steps code {
+    white-space: nowrap;
+  }
+
+  code {
+    padding: 0.1em 0.4em;
+    border-radius: 6px;
+    background: var(--paper-2);
+    font: 0.88em var(--mono);
+  }
+
+  pre {
+    margin: 16px 0;
+    padding: 20px 22px;
+    overflow-x: auto;
+    border-radius: var(--radius);
+    background: #24201d;
+    color: #f3ede6;
+    font: 14px/1.8 var(--mono);
+  }
+
+  pre code {
+    padding: 0;
+    background: none;
+    font: inherit;
+  }
+
+  pre .muted {
+    color: #9d9389;
+  }
+
+  .link {
+    color: var(--clay-ink);
+  }
+
+  .link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .notes {
+    padding: clamp(24px, 4vw, 36px);
+  }
+
+  @media (max-width: 760px) {
+    .two-col {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

@@ -1,0 +1,98 @@
+---
+import { render } from 'astro:content'
+import Icon from './Icon.astro'
+import { downloadUrl, formatSize, formatDate, type Release } from '../lib/releases'
+
+/** 更新日志中的一个版本；[latest] 时显示“最新版本”标记与下载按钮 */
+interface Props {
+  release: Release
+  latest?: boolean
+}
+const { release, latest = false } = Astro.props
+const { version, date, size, summary } = release.data
+const { Content } = await render(release)
+---
+
+<article id={`v${version}`} class="entry">
+  <aside>
+    <div class="meta">
+      <h2>v{version}</h2>
+      <time class="muted" datetime={date.toISOString()}>{formatDate(date)}</time>
+      {latest && <span class="chip chip-clay">最新版本</span>}
+      {
+        latest && (
+          <a class="btn btn-primary btn-sm" href={downloadUrl(version)}>
+            <Icon name="download" size={16} />
+            下载 · {formatSize(size)}
+          </a>
+        )
+      }
+    </div>
+  </aside>
+  <div class="body card">
+    <p class="summary">{summary}</p>
+    <div class="prose">
+      <Content />
+    </div>
+  </div>
+</article>
+
+<style>
+  .entry {
+    display: grid;
+    grid-template-columns: 220px minmax(0, 1fr);
+    gap: clamp(20px, 4vw, 48px);
+    padding-block: 28px;
+    border-top: 1px solid var(--line);
+    scroll-margin-top: 88px;
+  }
+
+  .meta {
+    position: sticky;
+    top: 104px;
+    display: grid;
+    justify-items: start;
+    gap: 10px;
+  }
+
+  .meta h2 {
+    font-size: 28px;
+  }
+
+  .meta time {
+    font-size: 14px;
+  }
+
+  .body {
+    padding: clamp(24px, 4vw, 40px);
+  }
+
+  .summary {
+    margin-bottom: 24px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid var(--line);
+    font-size: 18px;
+    font-weight: 600;
+  }
+
+  .entry:target .body {
+    box-shadow:
+      0 0 0 2px var(--clay),
+      var(--shadow);
+  }
+
+  @media (max-width: 760px) {
+    .entry {
+      grid-template-columns: 1fr;
+    }
+    .meta {
+      position: static;
+      grid-auto-flow: column;
+      align-items: center;
+      justify-content: start;
+    }
+    .meta .btn {
+      display: none;
+    }
+  }
+</style>

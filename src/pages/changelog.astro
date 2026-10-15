@@ -1,0 +1,107 @@
+---
+import Base from '../layouts/Base.astro'
+import ReleaseEntry from '../components/ReleaseEntry.astro'
+import { releases } from '../lib/releases'
+
+/** 默认展开最新的几个版本，其余收在“更多版本”里 */
+const SHOWN = 3
+const all = await releases()
+const recent = all.slice(0, SHOWN)
+const older = all.slice(SHOWN)
+---
+
+<Base title="更新日志" page="changelog" description="小衣柜每个版本的更新说明。">
+  <section class="head">
+    <div class="wrap">
+      <span class="eyebrow">Release notes</span>
+      <h1>更新日志</h1>
+    </div>
+  </section>
+
+  <section class="log">
+    <div class="wrap">
+      {recent.map((r, i) => <ReleaseEntry release={r} latest={i === 0} />)}
+      {
+        older.length > 0 && (
+          <details class="more">
+            <summary>
+              <span>更多版本</span>
+              <span class="muted">
+                v{older[older.length - 1].data.version} – v{older[0].data.version} · 共 {older.length} 个
+              </span>
+            </summary>
+            {older.map((r) => (
+              <ReleaseEntry release={r} />
+            ))}
+          </details>
+        )
+      }
+    </div>
+  </section>
+</Base>
+
+<script>
+  // 链接指向收起的旧版本（如 #v1.0.0）时先展开“更多版本”再定位
+  const reveal = () => {
+    const target = location.hash && document.getElementById(location.hash.slice(1))
+    const more = target?.closest('details')
+    if (target && more && !more.open) {
+      more.open = true
+      target.scrollIntoView()
+    }
+  }
+  reveal()
+  addEventListener('hashchange', reveal)
+</script>
+
+<style>
+  .head {
+    padding-block: clamp(48px, 7vw, 88px) clamp(24px, 4vw, 40px);
+  }
+
+  .head h1 {
+    margin: 16px 0 10px;
+    font-size: clamp(36px, 5vw, 56px);
+  }
+
+  .log {
+    padding-bottom: clamp(48px, 8vw, 96px);
+  }
+
+  .more {
+    border-top: 1px solid var(--line);
+  }
+
+  .more summary {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 28px 0;
+    font-size: 18px;
+    font-weight: 600;
+    cursor: pointer;
+    list-style: none;
+  }
+
+  .more summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .more summary .muted {
+    font-size: 14px;
+    font-weight: 400;
+  }
+
+  .more summary::after {
+    content: '+';
+    margin-left: auto;
+    color: var(--clay);
+    font-size: 26px;
+    font-weight: 300;
+    transition: rotate 0.25s ease;
+  }
+
+  .more[open] summary::after {
+    rotate: 45deg;
+  }
+</style>

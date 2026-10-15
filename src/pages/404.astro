@@ -1,0 +1,29 @@
+---
+import Base from '../layouts/Base.astro'
+---
+
+<Base title="页面不存在">
+  <section class="nf">
+    <div class="wrap">
+      <span class="eyebrow">404</span>
+      <h1>这件衣服不在衣柜里</h1>
+      <p class="muted">你要找的页面不存在，可能已经移动或删除。</p>
+      <a class="btn btn-primary" href={import.meta.env.BASE_URL}>回到首页</a>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .nf {
+    padding-block: clamp(96px, 16vw, 200px);
+    text-align: center;
+  }
+  .nf .wrap {
+    display: grid;
+    justify-items: center;
+    gap: 20px;
+  }
+  .nf h1 {
+    font-size: clamp(32px, 5vw, 52px);
+  }
+</style>

@@ -1,0 +1,134 @@
+---
+import Base from '../../layouts/Base.astro'
+import Icon from '../../components/Icon.astro'
+import { releases, downloadUrl, formatSize, formatDate } from '../../lib/releases'
+
+const [latest, ...older] = await releases()
+const base = import.meta.env.BASE_URL
+---
+
+<Base title="历史版本" page="download" description="小衣柜的历史版本安装包与校验值。">
+  <section class="head">
+    <div class="wrap">
+      <span class="eyebrow">Previous versions</span>
+      <h1>历史版本</h1>
+      <p class="muted">
+        当前最新版本为 <a href={`${base}download/`}>v{latest.data.version}</a>。
+      </p>
+    </div>
+  </section>
+
+  <section class="list">
+    <div class="wrap">
+      <ol>
+        {
+          older.map((r) => (
+            <li class="card">
+              <div class="row">
+                <div class="info">
+                  <h2>v{r.data.version}</h2>
+                  <p class="muted">
+                    <time datetime={r.data.date.toISOString()}>{formatDate(r.data.date)}</time> · {formatSize(r.data.size)}
+                  </p>
+                </div>
+                <p class="summary">{r.data.summary}</p>
+                <div class="actions">
+                  <a class="btn btn-ghost btn-sm" href={`${base}changelog/#v${r.data.version}`}>
+                    更新说明
+                  </a>
+                  <a class="btn btn-primary btn-sm" href={downloadUrl(r.data.version)}>
+                    <Icon name="download" size={16} />
+                    下载
+                  </a>
+                </div>
+              </div>
+              <p class="hash">
+                <span class="muted">SHA-256</span>
+                <code>{r.data.sha256}</code>
+              </p>
+            </li>
+          ))
+        }
+      </ol>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .head {
+    padding-block: clamp(48px, 7vw, 88px) clamp(24px, 4vw, 40px);
+  }
+
+  .head h1 {
+    margin: 16px 0 10px;
+    font-size: clamp(36px, 5vw, 56px);
+  }
+
+  .head a {
+    color: var(--clay-ink);
+    font-weight: 600;
+  }
+
+  .list {
+    padding-bottom: clamp(48px, 8vw, 96px);
+  }
+
+  ol {
+    display: grid;
+    gap: 14px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  li {
+    padding: 24px 28px;
+  }
+
+  .row {
+    display: grid;
+    grid-template-columns: 170px minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 24px;
+  }
+
+  .info h2 {
+    font-size: 22px;
+  }
+
+  .info p {
+    font-size: 14px;
+  }
+
+  .summary {
+    color: var(--ink-2);
+  }
+
+  .actions {
+    display: flex;
+    gap: 8px;
+  }
+
+  .hash {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 12px;
+    margin-top: 16px;
+    padding-top: 14px;
+    border-top: 1px solid var(--line);
+    font-size: 12px;
+  }
+
+  .hash code {
+    overflow-wrap: anywhere;
+    color: var(--muted);
+    font: 12px/1.5 var(--mono);
+  }
+
+  @media (max-width: 760px) {
+    .row {
+      grid-template-columns: 1fr;
+      gap: 12px;
+    }
+  }
+</style>
