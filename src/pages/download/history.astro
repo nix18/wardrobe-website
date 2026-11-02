@@ -14,6 +14,7 @@ const base = import.meta.env.BASE_URL
       <h1>历史版本</h1>
       <p class="muted">
         当前最新版本为 <a href={`${base}download/`}>v{latest.data.version}</a>。
+        v1.0.9 及更早的安装包只带新式签名，部分 OPPO、realme、一加手机安装时会提示“安装包内没有签名文件”，在这些手机上请安装 v1.0.10 或更新的版本。
       </p>
     </div>
   </section>
