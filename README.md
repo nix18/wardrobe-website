@@ -43,7 +43,7 @@ npm run check     # 发布工具单元测试
 npm run build     # 构建并检查本地链接与图片
 npx playwright install chromium --only-shell # 首次安装浏览器
 npm run test:layout # 320–430px 手机及桌面真实浏览器布局回归
-npm run deploy    # 仅手动重试远端部署；日常 push main 自动部署
+npm run deploy    # 仅手动重试远端部署；日常 push main 自动构建并发布到 gh-pages
 ```
 
 ## 发新版
@@ -57,7 +57,9 @@ git add src/content/releases && git commit -m "发布 v1.0.14" && git push
 
 `release` 从应用 Release 下载 APK 并核对来源 SHA-256，先上传公开草稿并核对资源大小与哈希，再发布、写入 `src/content/releases/v1.0.14.md`。同版本换包须显式 `--replace`，新版本不覆盖旧资源。更新说明里的“## 下载”一节会被去掉，其他可用 `--drop 标题`。
 
-站点 main 推送后，`.github/workflows/pages.yml` 检查工具、构建并检查本地链接与图片，再使用 GitHub Pages 官方部署。Pages 的来源设为 **GitHub Actions**，`github-pages` 环境的分支保护规则允许 `main`；从旧分支部署迁移时也要更新此规则。不再本地构建或强推 gh-pages。PR 只检查和构建，不部署。
+站点 `main` 只保存源码。推送后，`.github/workflows/pages.yml` 完成工具测试、构建和浏览器布局检查，把同一份验证后的产物增量提交到 `gh-pages`，再请求 Pages 发布；不在本地重复构建，不强推分支。PR 只检查和构建。
+
+Pages 来源保持 **Deploy from a branch → gh-pages → /**，`github-pages` 环境允许 `gh-pages`。工作流使用内置 `GITHUB_TOKEN`，不保存个人令牌；由于该令牌的推送不会自动触发 Pages，工作流显式请求构建。
 
 发布完核对公开 APK 的 SHA-256、在线下载页、更新日志和实际版本；CI 绿色只表示构建结束，不能代替在线验证。
 

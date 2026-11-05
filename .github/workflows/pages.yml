@@ -31,20 +31,70 @@ jobs:
         with:
           name: layout-test-results
           path: test-results/
-      - uses: actions/upload-pages-artifact@v4
+      - uses: actions/upload-artifact@v5
         if: github.event_name != 'pull_request'
         with:
-          path: dist
-  deploy:
+          name: website-dist
+          path: dist/
+          include-hidden-files: true
+          retention-days: 3
+  publish:
     if: github.event_name != 'pull_request'
     needs: build
     runs-on: ubuntu-latest
     permissions:
+      contents: write
       pages: write
-      id-token: write
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
     steps:
-      - uses: actions/deploy-pages@v4
-        id: deployment
+      - name: Checkout published branch
+        uses: actions/checkout@v5
+        with:
+          ref: gh-pages
+      - uses: actions/download-artifact@v5
+        with:
+          name: website-dist
+          path: ${{ runner.temp }}/website-dist
+      - name: Update gh-pages from the verified build
+        id: publish
+        env:
+          SITE_SOURCE_SHA: ${{ github.sha }}
+        run: |
+          test -f "$RUNNER_TEMP/website-dist/index.html"
+          test -f "$RUNNER_TEMP/website-dist/.nojekyll"
+          rsync -a --delete --exclude='.git' "$RUNNER_TEMP/website-dist/" ./
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -A
+          if git diff --cached --quiet; then
+            echo 'changed=false' >> "$GITHUB_OUTPUT"
+          else
+            git commit -m "Publish ${SITE_SOURCE_SHA}"
+            git push origin HEAD:gh-pages
+            echo 'changed=true' >> "$GITHUB_OUTPUT"
+          fi
+      - name: Request and verify Pages publication from gh-pages
+        if: github.event_name == 'workflow_dispatch' || github.run_attempt > 1 || steps.publish.outputs.changed == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          mode=$(gh api "repos/$GITHUB_REPOSITORY/pages" --jq .build_type)
+          if [ "$mode" = 'legacy' ]; then
+            gh api --method POST "repos/$GITHUB_REPOSITORY/pages/builds" --silent
+            expected=$(git rev-parse HEAD)
+            for attempt in $(seq 1 36); do
+              read -r actual state <<< "$(gh api "repos/$GITHUB_REPOSITORY/pages/builds/latest" --jq '.commit + " " + .status')"
+              if [ "$actual" = "$expected" ] && [ "$state" = 'built' ]; then
+                echo "Published gh-pages $expected"
+                exit 0
+              fi
+              if [ "$actual" = "$expected" ] && [ "$state" = 'errored' ]; then
+                gh api "repos/$GITHUB_REPOSITORY/pages/builds/latest" --jq '.error.message'
+                exit 1
+              fi
+              sleep 5
+            done
+            echo 'Pages publication timed out; retry this publish job.'
+            exit 1
+          else
+            echo 'gh-pages is updated. Set the Pages source to gh-pages to finish the one-time migration.'
+          fi
