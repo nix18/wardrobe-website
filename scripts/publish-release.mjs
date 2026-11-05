@@ -6,7 +6,7 @@ import { execFileSync } from 'node:child_process'
 import { readFileSync, statSync, writeFileSync, mkdtempSync, rmSync } from 'node:fs'
 import { basename, dirname, join, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
-import { cleanNotes, validateVersion } from './release-utils.mjs'
+import { cleanNotes, validateVersion, shouldUploadAsset } from './release-utils.mjs'
 const REPO='nix18/wardrobe-website'
 const root=resolve(dirname(fileURLToPath(import.meta.url)),'..')
 const args=process.argv.slice(2)
@@ -44,12 +44,12 @@ try {
     // API 失败不能误判为“版本不存在”；先列出 releases 再确定是否创建。
     const releases=JSON.parse(gh(['api',`repos/${REPO}/releases?per_page=100`]))
     current=releases.find(r=>r.tag_name===`v${version}`)
-    if(current&&!args.includes('--replace')) {
-      const old=release(REPO).assets.find(a=>a.name===expected)
-      if(old?.digest!==`sha256:${sha}`) throw new Error('同版本已存在不同 APK；确认后使用 --replace')
-    }
     if(!current) gh(['release','create',`v${version}`,apk,'--repo',REPO,'--title',`小衣柜 v${version}`,'--notes-file',notesFile,'--draft'])
-    else gh(['release','upload',`v${version}`,apk,'--repo',REPO,'--clobber'])
+    else {
+      const old=release(REPO).assets.find(a=>a.name===expected)
+      if(shouldUploadAsset(old,sha,size,args.includes('--replace')))
+        gh(['release','upload',`v${version}`,apk,'--repo',REPO,'--clobber'])
+    }
     const uploaded=release(REPO).assets.find(a=>a.name===expected)
     if(uploaded?.digest!==`sha256:${sha}`||uploaded.size!==size) throw new Error('公开资源校验失败，站点元数据未更新')
     gh(['release','edit',`v${version}`,'--repo',REPO,'--draft=false','--latest','--notes-file',notesFile])

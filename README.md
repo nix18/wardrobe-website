@@ -55,7 +55,7 @@ git add src/content/releases && git commit -m "发布 v1.0.14" && git push
 
 `release` 从应用 Release 下载 APK 并核对来源 SHA-256，先上传公开草稿并核对资源大小与哈希，再发布、写入 `src/content/releases/v1.0.14.md`。同版本换包须显式 `--replace`，新版本不覆盖旧资源。更新说明里的“## 下载”一节会被去掉，其他可用 `--drop 标题`。
 
-站点 main 推送后，`.github/workflows/pages.yml` 检查工具、构建并检查本地链接与图片，再使用 GitHub Pages 官方部署。Pages 的来源设为 **GitHub Actions**，不再本地构建或强推 gh-pages。PR 只检查和构建，不部署。
+站点 main 推送后，`.github/workflows/pages.yml` 检查工具、构建并检查本地链接与图片，再使用 GitHub Pages 官方部署。Pages 的来源设为 **GitHub Actions**，`github-pages` 环境的分支保护规则允许 `main`；从旧分支部署迁移时也要更新此规则。不再本地构建或强推 gh-pages。PR 只检查和构建，不部署。
 
 发布完核对公开 APK 的 SHA-256、在线下载页、更新日志和实际版本；CI 绿色只表示构建结束，不能代替在线验证。
 
