@@ -5,13 +5,14 @@
   "description": "小衣柜的产品网站（GitHub Pages）",
   "scripts": {
     "dev": "astro dev",
-    "build": "astro build",
+    "build": "astro build && node scripts/check-site.mjs",
     "preview": "astro preview",
     "og-image": "node scripts/og-image.mjs",
     "gen-images": "node scripts/gen-images.mjs",
     "release": "node scripts/publish-release.mjs",
     "deploy": "node scripts/deploy.mjs",
-    "readme-images": "node scripts/readme-images.mjs docs/readme"
+    "readme-images": "node scripts/readme-images.mjs docs/readme",
+    "check": "node --test scripts/*.test.mjs"
   },
   "engines": {
     "node": ">=22.12.0"

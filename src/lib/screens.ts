@@ -7,7 +7,7 @@ import tryOn from '../assets/screens/try-on.png'
 import me from '../assets/screens/me.png'
 import drawer from '../assets/screens/drawer.png'
 import addSheet from '../assets/screens/add-sheet.png'
-import form from '../assets/screens/form.png'
+import backgrounds from '../assets/screens/backgrounds-light.png'
 import wardrobeDark from '../assets/screens/wardrobe-dark.png'
 import wardrobeDynamic from '../assets/screens/wardrobe-dynamic.png'
 import meDark from '../assets/screens/me-dark.png'
@@ -31,7 +31,7 @@ export const screens = {
   me: { src: me, bar: paper },
   drawer: { src: drawer, bar: `linear-gradient(90deg, #FFFFFF 0 76.9%, ${scrim} 76.9%)` },
   addSheet: { src: addSheet, bar: scrim },
-  form: { src: form, bar: paper },
+  backgrounds: { src: backgrounds, bar: scrim },
   wardrobeDark: { src: wardrobeDark, bar: '#120E0C', dark: true },
   wardrobeDynamic: { src: wardrobeDynamic, bar: '#EEEDF4' },
   meDark: { src: meDark, bar: '#120E0C', dark: true },
