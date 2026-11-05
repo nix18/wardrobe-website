@@ -32,6 +32,16 @@ test.describe('mobile pages', () => {
         await page.goto(path || './')
         await settle(page)
         await fitsViewport(page)
+        if (!path) {
+          const button = await page.locator('.hero .btn-primary').evaluate(element => ({
+            height: element.getBoundingClientRect().height,
+            width: element.clientWidth,
+            content: element.scrollWidth,
+          }))
+          expect(button.height).toBeGreaterThanOrEqual(44)
+          expect(button.height).toBeLessThanOrEqual(56)
+          expect(button.content).toBeLessThanOrEqual(button.width + 1)
+        }
       })
     }
   }
