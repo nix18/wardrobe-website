@@ -308,7 +308,7 @@ h3 {
 /* ---------------------------------------------------------------- 入场动画 */
 
 @media (prefers-reduced-motion: no-preference) {
-  .reveal {
+  .js-reveal .reveal {
     opacity: 0;
     translate: 0 24px;
     transition:
@@ -317,7 +317,7 @@ h3 {
     transition-delay: var(--delay, 0s);
   }
 
-  .reveal.shown {
+  .js-reveal .reveal.shown {
     opacity: 1;
     translate: 0 0;
   }

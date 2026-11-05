@@ -30,7 +30,7 @@
 | `/changelog/` | 最近 3 个版本，再往前的收在“更多版本”里 |
 | `/privacy/` | 隐私政策，和应用里的一致 |
 
-首页的界面截图跟着滚轮走：往下滚时横向滑动，滑到最后一张再继续往下。深色模式跟随系统。没有用前端框架，样式都在 `src/styles/global.css`。
+首页的界面截图跟着滚轮走：往下滚时横向滑动，滑到最后一张再继续往下。深色模式跟随系统。没有客户端 UI 框架；共享样式在 `src/styles/global.css`，页面局部样式跟随各 Astro 页面。禁用脚本时正文仍可见。
 
 ## 本地跑
 
@@ -39,7 +39,9 @@ Node.js 22.12 以上。
 ```bash
 npm ci
 npm run dev       # http://localhost:4321/wardrobe-website/
-npm run deploy    # 构建，推到 gh-pages 分支，Pages 从那里发布
+npm run check     # 发布工具单元测试
+npm run build     # 构建并检查本地链接与图片
+npm run deploy    # 仅手动重试远端部署；日常 push main 自动部署
 ```
 
 ## 发新版
@@ -47,12 +49,15 @@ npm run deploy    # 构建，推到 gh-pages 分支，Pages 从那里发布
 应用打好正式包之后：
 
 ```bash
-npm run release -- 1.0.7 --apk wardrobe-1.0.7.apk --notes v1.0.7.md --summary "一句话摘要"
-git add src/content/releases && git commit -m "发布 v1.0.7" && git push
-npm run deploy
+npm run release -- 1.0.14 --source-repo nix18/clothes-app-workspace --summary "一句话更新摘要"
+git add src/content/releases && git commit -m "发布 v1.0.14" && git push
 ```
 
-`release` 把安装包传到 Releases（说明末尾附 SHA-256），再写一份 `src/content/releases/v1.0.7.md`。更新说明里的“## 下载”一节会被去掉，其他想去掉的小节用 `--drop 标题`。首页、下载页、更新日志都从这些文件读版本。
+`release` 从应用 Release 下载 APK 并核对来源 SHA-256，先上传公开草稿并核对资源大小与哈希，再发布、写入 `src/content/releases/v1.0.14.md`。同版本换包须显式 `--replace`，新版本不覆盖旧资源。更新说明里的“## 下载”一节会被去掉，其他可用 `--drop 标题`。
+
+站点 main 推送后，`.github/workflows/pages.yml` 检查工具、构建并检查本地链接与图片，再使用 GitHub Pages 官方部署。Pages 的来源设为 **GitHub Actions**，不再本地构建或强推 gh-pages。PR 只检查和构建，不部署。
+
+发布完核对公开 APK 的 SHA-256、在线下载页、更新日志和实际版本；CI 绿色只表示构建结束，不能代替在线验证。
 
 ## 图片
 

@@ -86,7 +86,7 @@ const nav = [
             <Logo size={30} />
             <span>小衣柜</span>
           </a>
-          <p class="muted">会整理、会试穿的 AI 衣橱。<br />数据留在你的手机里。</p>
+          <p class="muted">会整理、会试穿的 AI 衣橱。<br />本机保存，按你的选择使用 AI 与同步。</p>
         </div>
         <div class="footer-links">
           <div>
@@ -116,6 +116,10 @@ const nav = [
     <script>
       // 滚动到视野内时淡入
       const items = document.querySelectorAll('.reveal')
+      document.documentElement.classList.add('js-reveal')
+      // 脚本异常或观察器不可用时仍展示正文。
+      const revealAll = () => items.forEach((el) => el.classList.add('shown'))
+      setTimeout(revealAll, 2500)
       if ('IntersectionObserver' in window) {
         const io = new IntersectionObserver(
           (entries) => {

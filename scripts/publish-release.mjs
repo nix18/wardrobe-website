@@ -1,91 +1,63 @@
-// 发布一个版本：上传安装包到本仓库的 GitHub Releases，并写入网站的更新说明（src/content/releases/v<版本>.md）。
-//
-//   node scripts/publish-release.mjs 1.0.6 --apk path/to/wardrobe-1.0.6.apk --notes path/to/v1.0.6.md --summary "一句话摘要"
-//     [--date 2026-10-15T03:00:42Z]  发布时间，默认为现在
-//     [--no-upload]                  只写更新说明，不上传（安装包已在 Releases 中）
-//     [--drop 标题]                  另外去掉更新说明中的某个二级小节（可重复）
-//
-// 之后提交并推送 src/content/releases/，GitHub Actions 会重新构建网站，“下载最新版”随之更新。
-// 更新说明中的“## 下载”一节会被去掉：网站与 Releases 页面本身就是下载入口（其中的 R8 映射文件也不公开发布）。
+// 从已验证的应用 Release 发布公开 APK，再写入站点元数据。提交并 push 后由 Pages workflow 自动部署。
+// npm run release -- 1.0.14 --source-repo nix18/clothes-app-workspace --summary "更新摘要"
+// 本地文件仍可用 --apk <file> --notes <file>；同版本替换须显式 --replace。
 import { createHash } from 'node:crypto'
 import { execFileSync } from 'node:child_process'
-import { readFileSync, statSync, writeFileSync, mkdtempSync } from 'node:fs'
-import { basename, dirname, join } from 'node:path'
-import { tmpdir } from 'node:os'
+import { readFileSync, statSync, writeFileSync, mkdtempSync, rmSync } from 'node:fs'
+import { basename, dirname, join, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
-
-const REPO = 'nix18/wardrobe-website'
-const root = join(dirname(fileURLToPath(import.meta.url)), '..')
-
-const args = process.argv.slice(2)
-const version = args[0]?.replace(/^v/, '')
-const option = (name) => {
-  const i = args.indexOf(`--${name}`)
-  return i >= 0 ? args[i + 1] : undefined
-}
-const apk = option('apk')
-const notesFile = option('notes')
-const summary = option('summary')
-const date = option('date') ?? new Date().toISOString()
-const upload = !args.includes('--no-upload')
-if (!version || !/^\d+\.\d+\.\d+$/.test(version) || !apk || !notesFile || !summary) {
-  console.error('用法：node scripts/publish-release.mjs <版本> --apk <安装包> --notes <更新说明.md> --summary <一句话摘要> [--date <时间>] [--no-upload]')
-  process.exit(1)
-}
-const expected = `wardrobe-${version}.apk`
-if (basename(apk) !== expected) throw new Error(`安装包文件名应为 ${expected}（网站的下载链接按这个名字拼接）`)
-
-const bytes = readFileSync(apk)
-const size = statSync(apk).size
-const sha256 = createHash('sha256').update(bytes).digest('hex')
-const dropped = ['下载', ...args.flatMap((a, i) => (a === '--drop' ? [args[i + 1]] : []))]
-
-/** 去掉 Markdown 中标题在 [titles] 里的二级小节（到下一个二级标题为止） */
-function dropSections(md, titles) {
-  let skipping = false
-  return md
-    .split('\n')
-    .filter((line) => {
-      if (line.startsWith('## ')) skipping = titles.includes(line.slice(3).trim())
-      return !skipping
-    })
-    .join('\n')
-}
-
-const notes = dropSections(readFileSync(notesFile, 'utf8').replace(/\r\n/g, '\n'), dropped)
-  .replace(/\n{3,}/g, '\n\n')
-  .trim()
-
-const frontmatter = [
-  '---',
-  `version: '${version}'`,
-  `date: ${date}`,
-  `size: ${size}`,
-  `sha256: '${sha256}'`,
-  `summary: ${JSON.stringify(summary)}`,
-  '---',
-  '',
-].join('\n')
-const target = join(root, 'src/content/releases', `v${version}.md`)
-writeFileSync(target, `${frontmatter}${notes}\n`)
-console.log(`写入 ${target}（${(size / 1048576).toFixed(1)} MB，SHA-256 ${sha256}）`)
-
-if (upload) {
-  const body = join(mkdtempSync(join(tmpdir(), 'release-')), 'notes.md')
-  writeFileSync(body, `${notes}\n\n---\n\nSHA-256（${expected}）：\`${sha256}\`\n`)
-  const exists = (() => {
-    try {
-      execFileSync('gh', ['release', 'view', `v${version}`, '--repo', REPO], { stdio: 'ignore' })
-      return true
-    } catch {
-      return false
-    }
-  })()
-  if (exists) {
-    execFileSync('gh', ['release', 'upload', `v${version}`, apk, '--repo', REPO, '--clobber'], { stdio: 'inherit' })
-    execFileSync('gh', ['release', 'edit', `v${version}`, '--repo', REPO, '--notes-file', body], { stdio: 'inherit' })
-  } else {
-    execFileSync('gh', ['release', 'create', `v${version}`, apk, '--repo', REPO, '--title', `小衣柜 v${version}`, '--notes-file', body], { stdio: 'inherit' })
+import { cleanNotes, validateVersion } from './release-utils.mjs'
+const REPO='nix18/wardrobe-website'
+const root=resolve(dirname(fileURLToPath(import.meta.url)),'..')
+const args=process.argv.slice(2)
+const option=(name)=>{const i=args.indexOf(`--${name}`);return i<0?undefined:args[i+1]}
+const version=validateVersion(args[0]?.replace(/^v/,'')??'')
+const summary=option('summary');if(!summary) throw new Error('需要 --summary 更新摘要')
+const date=option('date')??new Date().toISOString()
+if(Number.isNaN(Date.parse(date))) throw new Error('无效的发布日期')
+const gh=(params)=>execFileSync('gh',params,{encoding:'utf8'})
+const release=(repo)=>JSON.parse(gh(['release','view',`v${version}`,'--repo',repo,'--json','tagName,body,assets']))
+const expected=`wardrobe-${version}.apk`
+const work=mkdtempSync(join(root,'.release-work-'))
+try {
+  let apk=option('apk'), notes=option('notes')?readFileSync(option('notes'),'utf8'):undefined, expectedSha
+  const source=option('source-repo')
+  if(source) {
+    const published=release(source)
+    const asset=published.assets.find(a=>a.name===expected)
+    if(!asset?.digest?.startsWith('sha256:')) throw new Error('来源 Release 缺少 APK SHA-256，停止发布')
+    expectedSha=asset.digest.slice(7)
+    gh(['release','download',`v${version}`,'--repo',source,'--pattern',expected,'--dir',work])
+    apk=join(work,expected); notes??=published.body
   }
-  console.log(`已上传到 https://github.com/${REPO}/releases/tag/v${version}`)
+  if(!apk||!notes||basename(apk)!==expected) throw new Error(`需要来源 Release 或 --apk ${expected} --notes <file>`)
+  const bytes=readFileSync(apk),size=statSync(apk).size
+  if(bytes[0]!==0x50||bytes[1]!==0x4b||size<1024) throw new Error('APK 不是有效的 ZIP 安装包')
+  const sha=createHash('sha256').update(bytes).digest('hex')
+  if(expectedSha&&sha!==expectedSha) throw new Error('下载 APK 的 SHA-256 与来源 Release 不一致')
+  notes=cleanNotes(notes,['下载',...args.flatMap((x,i)=>x==='--drop'?[args[i+1]]:[])])
+  const notesFile=join(work,'notes.md')
+  writeFileSync(notesFile,`${notes}\n\n---\n\nSHA-256（${expected}）：\`${sha}\`\n`)
+  const upload=!args.includes('--no-upload')
+  if(upload) {
+    let current
+    // API 失败不能误判为“版本不存在”；先列出 releases 再确定是否创建。
+    const releases=JSON.parse(gh(['api',`repos/${REPO}/releases?per_page=100`]))
+    current=releases.find(r=>r.tag_name===`v${version}`)
+    if(current&&!args.includes('--replace')) {
+      const old=release(REPO).assets.find(a=>a.name===expected)
+      if(old?.digest!==`sha256:${sha}`) throw new Error('同版本已存在不同 APK；确认后使用 --replace')
+    }
+    if(!current) gh(['release','create',`v${version}`,apk,'--repo',REPO,'--title',`小衣柜 v${version}`,'--notes-file',notesFile,'--draft'])
+    else gh(['release','upload',`v${version}`,apk,'--repo',REPO,'--clobber'])
+    const uploaded=release(REPO).assets.find(a=>a.name===expected)
+    if(uploaded?.digest!==`sha256:${sha}`||uploaded.size!==size) throw new Error('公开资源校验失败，站点元数据未更新')
+    gh(['release','edit',`v${version}`,'--repo',REPO,'--draft=false','--latest','--notes-file',notesFile])
+  }
+  const metadata=['---',`version: '${version}'`,`date: ${date}`,`size: ${size}`,`sha256: '${sha}'`,`summary: ${JSON.stringify(summary)}`,'---','',notes,''].join('\n')
+  writeFileSync(join(root,'src/content/releases',`v${version}.md`),metadata)
+  console.log(`v${version} APK 校验完成：${sha}\n提交并推送站点改动后将自动部署。`)
+} finally {
+  if(dirname(resolve(work))!==root||!basename(work).startsWith('.release-work-')) throw new Error('临时目录越界')
+  rmSync(work,{recursive:true,force:true})
 }

@@ -25,11 +25,11 @@ const screens = [
   { screen: shots.wardrobe, title: '衣柜', text: '双列瀑布流，照片按原比例展示' },
   { screen: shots.detail, title: '衣物详情', text: '多张照片、AI 描述与标签' },
   { screen: shots.search, title: '搜索', text: '标签筛选与自然语言' },
-  { screen: shots.tryOn, title: 'AI 试穿', text: '模特、衣物、动作与视角' },
+  { screen: shots.tryOn, title: 'AI 试穿', text: '模特、衣物、动作、背景与视角' },
   { screen: shots.me, title: '我的', text: '衣橱概览与常用入口' },
   { screen: shots.drawer, title: '侧边栏', text: '批量导入、分类、AI 服务、同步' },
   { screen: shots.addSheet, title: '添加衣物', text: '拍照、相册多选、批量导入' },
-  { screen: shots.form, title: '编辑模特', text: '身材数据与云同步设置' },
+  { screen: shots.backgrounds, title: '试穿背景', text: '内置影棚与从照片提取的空场景' },
   { screen: shots.wardrobeDark, title: '深色模式', text: '同一套设计，夜里也舒服' },
   { screen: shots.wardrobeDynamic, title: '壁纸取色', text: '整套界面跟随系统配色' },
   { screen: shots.meDark, title: '我的 · 深色', text: '' },
@@ -41,6 +41,7 @@ const details = [
   { icon: 'mannequin', title: '你的模特', text: '6 种预置身材，或上传自己的照片生成标准形象；身高、三围可按国标号型推荐。' },
   { icon: 'face', title: '外观风格', text: '妆容、美颜、表情和画面风格可选，默认是讨喜的甜美写真；试穿时还能临时换一套。' },
   { icon: 'duplicate', title: '以图查重', text: '新衣服先拍一张：向量召回候选，再让模型逐一比对，避免买重。' },
+  { icon: 'pose', title: '背景模板', text: '选择内置影棚，或从照片提取空场景。三个视角共用同一背景，换装与背景一次完成。' },
   { icon: 'tag', title: 'AI 生成标识', text: 'AI 图片按 GB 45438-2025 加显式标识，并在文件中写入隐式标识。' },
 ] as const
 
