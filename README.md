@@ -34,13 +34,15 @@
 
 ## 本地跑
 
-Node.js 22.12 以上。
+Node.js 22.19 以上。
 
 ```bash
 npm ci
 npm run dev       # http://localhost:4321/wardrobe-website/
 npm run check     # 发布工具单元测试
 npm run build     # 构建并检查本地链接与图片
+npx playwright install chromium --only-shell # 首次安装浏览器
+npm run test:layout # 320–430px 手机及桌面真实浏览器布局回归
 npm run deploy    # 仅手动重试远端部署；日常 push main 自动部署
 ```
 

@@ -24,6 +24,13 @@ jobs:
       - run: npm ci
       - run: npm run check
       - run: npm run build
+      - run: npx playwright install --with-deps chromium --only-shell
+      - run: npm run test:layout
+      - uses: actions/upload-artifact@v5
+        if: failure()
+        with:
+          name: layout-test-results
+          path: test-results/
       - uses: actions/upload-pages-artifact@v4
         if: github.event_name != 'pull_request'
         with:

@@ -465,6 +465,7 @@ const faqs = [
   }
 
   .hero-copy {
+    min-width: 0;
     display: grid;
     gap: 26px;
   }
@@ -592,7 +593,7 @@ const faqs = [
 
   @media (max-width: 960px) {
     .hero-grid {
-      grid-template-columns: 1fr;
+      grid-template-columns: minmax(0, 1fr);
     }
     .hero-visual {
       height: 560px;
@@ -747,7 +748,7 @@ const faqs = [
   @media (max-width: 900px) {
     .feature,
     .feature.flip {
-      grid-template-columns: 1fr;
+      grid-template-columns: minmax(0, 1fr);
     }
     .feature.flip .feature-copy {
       order: 0;
@@ -766,11 +767,19 @@ const faqs = [
       padding: 32px 16px;
       min-height: 0;
     }
+    .feature-visual {
+      min-width: 0;
+      gap: 12px;
+    }
     .feature-visual :global(.phone) {
-      --phone-w: 210px !important;
+      --phone-w: clamp(150px, 50vw, 210px) !important;
+    }
+    .side-stack {
+      width: clamp(64px, 22vw, 104px);
+      flex: none;
     }
     .side-stack .photo-tile {
-      width: 104px;
+      width: 100%;
     }
   }
 
@@ -879,7 +888,7 @@ const faqs = [
 
   @media (max-width: 1000px) {
     .flow {
-      grid-template-columns: 1fr;
+      grid-template-columns: minmax(0, 1fr);
       justify-items: center;
     }
     .flow-arrow {
@@ -900,6 +909,9 @@ const faqs = [
     }
     .flow-inputs {
       gap: 10px;
+      flex-wrap: wrap;
+      justify-content: center;
+      max-width: 100%;
     }
     .flow-garments {
       grid-template-columns: repeat(3, 52px);
@@ -952,7 +964,7 @@ const faqs = [
 
   @media (max-width: 560px) {
     .detail-grid {
-      grid-template-columns: 1fr;
+      grid-template-columns: minmax(0, 1fr);
     }
   }
 
@@ -1020,10 +1032,10 @@ const faqs = [
 
   @media (max-width: 760px) {
     .trust-grid {
-      grid-template-columns: 1fr;
+      grid-template-columns: minmax(0, 1fr);
     }
     .providers > div {
-      grid-template-columns: 1fr;
+      grid-template-columns: minmax(0, 1fr);
       gap: 8px;
     }
   }
@@ -1182,7 +1194,7 @@ const faqs = [
 
   @media (max-width: 860px) {
     .updates-grid {
-      grid-template-columns: 1fr;
+      grid-template-columns: minmax(0, 1fr);
     }
   }
 
@@ -1240,7 +1252,7 @@ const faqs = [
 
   @media (max-width: 860px) {
     .faq-grid {
-      grid-template-columns: 1fr;
+      grid-template-columns: minmax(0, 1fr);
     }
   }
 
@@ -1310,10 +1322,24 @@ const faqs = [
 
   @media (max-width: 720px) {
     .cta-inner {
-      grid-template-columns: 1fr;
+      grid-template-columns: minmax(0, 1fr);
     }
     .cta-photo {
       width: 150px;
     }
+  }
+
+  @media (max-width: 380px) {
+    .hero h1 { font-size: clamp(28px, 8.6vw, 33px); }
+    .hero-actions .btn {
+      max-width: 100%;
+      min-height: 52px;
+      height: auto;
+      padding: 12px 18px;
+      white-space: normal;
+      flex-wrap: wrap;
+      text-align: center;
+    }
+    .hero-actions .btn small { flex-basis: 100%; }
   }
 </style>

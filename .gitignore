@@ -6,3 +6,6 @@ art/out/
 .env
 
 .release-work-*/
+
+test-results/
+playwright-report/

@@ -130,7 +130,7 @@ shasum -a 256 {apkName(v)}</code></pre>
 
   .latest-main {
     display: grid;
-    grid-template-columns: auto 1fr auto;
+    grid-template-columns: auto minmax(0, 1fr) auto;
     align-items: center;
     gap: 24px;
   }
@@ -141,6 +141,7 @@ shasum -a 256 {apkName(v)}</code></pre>
   }
 
   .latest-info {
+    min-width: 0;
     display: grid;
     gap: 6px;
   }
@@ -203,7 +204,7 @@ shasum -a 256 {apkName(v)}</code></pre>
 
   @media (max-width: 720px) {
     .latest-main {
-      grid-template-columns: auto 1fr;
+      grid-template-columns: auto minmax(0, 1fr);
     }
     .dl-btn {
       grid-column: 1 / -1;
@@ -236,7 +237,7 @@ shasum -a 256 {apkName(v)}</code></pre>
 
   .steps li {
     display: grid;
-    grid-template-columns: 40px 1fr;
+    grid-template-columns: 40px minmax(0, 1fr);
     column-gap: 16px;
     counter-increment: step;
   }
@@ -270,6 +271,8 @@ shasum -a 256 {apkName(v)}</code></pre>
   }
 
   pre {
+    max-width: 100%;
+    min-width: 0;
     margin: 16px 0;
     padding: 20px 22px;
     overflow-x: auto;
@@ -305,7 +308,13 @@ shasum -a 256 {apkName(v)}</code></pre>
 
   @media (max-width: 760px) {
     .two-col {
-      grid-template-columns: 1fr;
+      grid-template-columns: minmax(0, 1fr);
     }
+  }
+
+  @media (max-width: 520px) {
+    .latest-main { gap: 16px; }
+    .latest-title h2 { font-size: clamp(20px, 5.6vw, 26px); }
+    .hash code { flex-basis: 100%; order: 1; }
   }
 </style>
