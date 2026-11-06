@@ -73,3 +73,5 @@ Pages 来源保持 **Deploy from a branch → gh-pages → /**，`github-pages` 
 | `docs/readme/` | 这份 README 的配图 | `npm run readme-images`，网站预览图要另外传两张截图 |
 
 示例照片也是应用截图测试里的样图。网站上的模特、衣物和试穿图都是 AI 生成的，页脚写明了。
+
+修订发布支持 `1.0.15-r1`：按修订数字排序，旧标签与旧APK保留。应用显示版本可为1.0.15，网站和文件名明确区分修订。
