@@ -1,4 +1,5 @@
 import { getCollection, type CollectionEntry } from 'astro:content'
+import { compareVersions } from '../../scripts/release-utils.mjs'
 
 export const REPO = 'nix18/wardrobe-website'
 export const REPO_URL = `https://github.com/${REPO}`
@@ -8,8 +9,7 @@ export type Release = CollectionEntry<'releases'>
 /** 按版本号从新到旧 */
 export async function releases(): Promise<Release[]> {
   const all = await getCollection('releases')
-  const key = (v: string) => v.split('.').map((n) => n.padStart(4, '0')).join('.')
-  return all.sort((a, b) => key(b.data.version).localeCompare(key(a.data.version)))
+  return all.sort((a, b) => compareVersions(b.data.version, a.data.version))
 }
 
 export async function latest(): Promise<Release> {
