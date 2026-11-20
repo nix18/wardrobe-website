@@ -1,9 +1,9 @@
 import { expect, test } from '@playwright/test'
 
-const countryEndpoint = 'https://ipapi.co/country/'
+const countryEndpoint = 'https://api.country.is/'
 
 test('locates visitors by country and preserves the route, query, and fragment', async ({ page }) => {
-  await page.route(countryEndpoint, route => route.fulfill({ body: 'TW\n' }))
+  await page.route(countryEndpoint, route => route.fulfill({ json: { country: 'TW' } }))
   await page.goto('changelog/?campaign=test#v1.0.15-r1')
   await expect(page).toHaveURL(/\/zh-hant\/changelog\/\?campaign=test#v1\.0\.15-r1$/)
   await expect(page.locator('html')).toHaveAttribute('lang', 'zh-Hant')
@@ -36,7 +36,7 @@ test('keeps English when the lookup fails and honors a manual Chinese choice', a
 })
 
 test('keeps English for a country outside the localized regions', async ({ page }) => {
-  await page.route(countryEndpoint, route => route.fulfill({ body: 'US' }))
+  await page.route(countryEndpoint, route => route.fulfill({ json: { country: 'US' } }))
   await page.goto('download/')
   await expect(page.getByRole('heading', { name: 'Download Wardrobe' })).toBeVisible()
   await expect(page).toHaveURL(/\/wardrobe-website\/download\/$/)
@@ -51,7 +51,7 @@ for (const [country, language, title] of [
   ['JP', 'ja', 'Wardrobe をダウンロード'],
 ]) {
   test(`selects ${language} for ${country}`, async ({ page }) => {
-    await page.route(countryEndpoint, route => route.fulfill({ body: country }))
+    await page.route(countryEndpoint, route => route.fulfill({ json: { country } }))
     await page.goto('download/')
     await expect(page).toHaveURL(new RegExp(`/${language}/download/$`))
     await expect(page.getByRole('heading', { name: title, exact: true })).toBeVisible()

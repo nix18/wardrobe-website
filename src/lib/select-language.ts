@@ -61,7 +61,8 @@ async function detectRegion() {
       signal: AbortSignal.timeout(2000),
     })
     if (!response.ok) return 'en'
-    const country = (await response.text()).trim().toUpperCase()
+    const result: { country?: unknown } = await response.json()
+    const country = typeof result?.country === 'string' ? result.country.trim().toUpperCase() : ''
     const browserLanguage = navigator.language.toLowerCase().split('-')[0]
     if (['BE', 'CA', 'CH', 'LU'].includes(country) && browserLanguage === 'fr') return 'fr'
     if (['BE', 'CH', 'LU'].includes(country) && browserLanguage === 'de') return 'de'

@@ -11,7 +11,7 @@ export const languages = {
 
 export type Language = keyof typeof languages
 
-export const countryEndpoint = 'https://ipapi.co/country/'
+export const countryEndpoint = 'https://api.country.is/'
 export const languagePreferenceKey = 'wardrobe-language'
 
 const siteBase = import.meta.env.BASE_URL.replace(/\/$/, '') + '/'

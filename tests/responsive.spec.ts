@@ -24,7 +24,7 @@ async function fitsViewport(page: Page) {
 }
 
 test.beforeEach(async ({ page }) => {
-  await page.route('https://ipapi.co/country/', route => route.fulfill({ body: 'US' }))
+  await page.route('https://api.country.is/', route => route.fulfill({ json: { country: 'US' } }))
 })
 
 test.describe('mobile pages', () => {
