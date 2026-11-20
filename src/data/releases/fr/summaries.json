@@ -8,6 +8,7 @@
   "1.0.14": "Choisir un studio intégré ou extraire un fond d'une photo. Générer ensemble la tenue, la pose et le fond sur trois vues.",
   "1.0.15": "Identifier les vêtements stratifiés individuellement, examiner leurs cultures et leur ordre, et préserver le placement gauche/droit et la construction de vêtements dans les vues arrière.",
   "1.0.15-r1": "Catégories d'articles unifiées et recherche, montrez chaque vêtement sélectionné dans l'histoire de essayage virtuel, et améliorer la recherche de bandeau et la cohérence des accessoires sur les vues.",
+  "1.0.16": "Wardrobe suit la langue du téléphone et prend en charge huit langues. Le site choisit une langue selon la région et ses captures d’écran ont été mises à jour.",
   "1.0.2": "Les modèles générés et les images d’essayage virtuel utilisent désormais un éclairage doux, même pour des visages plus naturels.",
   "1.0.3": "Ombres de grille en diagonale fixe sur les faces dans les images IA et essayage virtuel générées par le modèle.",
   "1.0.4": "Nettoyer les patrons de grille et le grain avant de réutiliser les images IA comme références, réduisant ainsi les artefacts des modifications répétées.",

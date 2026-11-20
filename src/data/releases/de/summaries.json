@@ -8,6 +8,7 @@
   "1.0.14": "Wählen Sie ein eingebautes Studio oder extrahieren Sie einen Hintergrund aus einem Foto. Generieren Sie Outfit, Pose und Hintergrund in drei Ansichten.",
   "1.0.15": "Identifizieren Sie geschichtete Kleidungsstücke einzeln, überprüfen Sie ihre Ernten und Ordnung und bewahren Sie die linke / rechte Platzierung und Kleidungsstückkonstruktion in Rückansichten auf.",
   "1.0.15-r1": "Vereinheitlichte Artikelkategorien und Suche, zeigen jedes ausgewählte Kleidungsstück in der virtuelle Anprobe-Historie an und verbessern die Headband-Suche und die Konsistenz der Zubehörteile in den Ansichten.",
+  "1.0.16": "Wardrobe übernimmt die Sprache des Telefons und unterstützt acht Sprachen. Die Website wählt die Sprache nach Region und zeigt aktualisierte Screenshots.",
   "1.0.2": "Generierte Modelle und virtuelle Anprobe-Bilder verwenden jetzt weiche, gleichmäßige Beleuchtung für natürlichere Gesichter.",
   "1.0.3": "Feste diagonale Gitterschatten auf Gesichtern in KI-generierten Modellen und virtuelle Anprobe-Bildern.",
   "1.0.4": "Bereinigte Gittermuster und Korn, bevor KI-Bilder als Referenzen wiederverwendet wurden, wodurch Artefakte aus wiederholten Bearbeitungen reduziert wurden.",

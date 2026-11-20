@@ -8,6 +8,7 @@
   "1.0.14": "Elija un estudio integrado o extraiga un fondo de una foto. Generar conjunto, pose y fondo juntos en tres vistas.",
   "1.0.15": "Identificar prendas capas individualmente, revisar sus cultivos y orden, y preservar la colocación izquierda/derecha y la construcción de prendas en las vistas traseras.",
   "1.0.15-r1": "Categorías de elementos unificados y búsqueda, mostrar cada prenda seleccionada en la historia de prueba virtual, y mejorar la búsqueda de la banda de la cabeza y la consistencia accesoria a través de las vistas.",
+  "1.0.16": "Wardrobe sigue el idioma del teléfono y admite ocho idiomas. El sitio elige el idioma según la región y muestra capturas actualizadas.",
   "1.0.2": "Los modelos generados y las imágenes de prueba virtual ahora usan suave, incluso iluminación para caras más naturales.",
   "1.0.3": "Sombras fijas de rejilla diagonal en las caras en el modelo IA y las imágenes de prueba virtual.",
   "1.0.4": "Limpiar patrones de rejilla y grano antes de reutilizar imágenes IA como referencias, reduciendo artefactos de ediciones repetidas.",
