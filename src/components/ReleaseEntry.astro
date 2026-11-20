@@ -66,6 +66,8 @@ const { version, date, size } = release.data
   }
 
   .body {
+    min-width: 0;
+    overflow-wrap: anywhere;
     padding: clamp(24px, 4vw, 40px);
   }
 
@@ -85,13 +87,13 @@ const { version, date, size } = release.data
 
   @media (max-width: 760px) {
     .entry {
-      grid-template-columns: 1fr;
+      grid-template-columns: minmax(0, 1fr);
     }
     .meta {
       position: static;
-      grid-auto-flow: column;
+      display: flex;
+      flex-wrap: wrap;
       align-items: center;
-      justify-content: start;
     }
     .meta .btn {
       display: none;

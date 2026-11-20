@@ -60,7 +60,7 @@ test.describe('mobile pages', () => {
   }
 
   for (const language of ['zh-hant', 'es', 'fr', 'pt', 'de', 'ja']) {
-    for (const route of ['', 'download/', 'download/history/', 'privacy/']) {
+    for (const route of ['', 'download/', 'download/history/', 'changelog/', 'privacy/']) {
       test(`320px ${language}/${route} fits the viewport`, async ({ page }) => {
         await page.setViewportSize({ width: 320, height: 844 })
         await page.goto(`${language}/${route}`)
