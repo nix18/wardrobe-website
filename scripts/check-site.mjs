@@ -1,5 +1,5 @@
 import { readdirSync, readFileSync, existsSync, statSync } from 'node:fs'
-import { resolve, join } from 'node:path'
+import { resolve, join, relative, sep } from 'node:path'
 const root = resolve('dist')
 const html = []
 function walk(dir) { for (const e of readdirSync(dir, {withFileTypes:true})) {
@@ -7,9 +7,16 @@ function walk(dir) { for (const e of readdirSync(dir, {withFileTypes:true})) {
 } }
 walk(root)
 const errors=[]
+const routeLocales = { zh: 'zh-CN', 'zh-hant': 'zh-Hant', fr: 'fr', pt: 'pt', es: 'es', de: 'de', ja: 'ja' }
+for (const route of Object.keys(routeLocales)) {
+  for (const page of ['', 'changelog', 'download', 'download/history', 'privacy', '404']) {
+    if (!existsSync(join(root, route, page, 'index.html'))) errors.push(`Missing ${route}/${page}/`)
+  }
+}
 for (const file of html) {
   const text=readFileSync(file,'utf8')
-  if (!text.includes('<title>') || !text.includes(`<html lang="${file.startsWith(join(root, 'zh') + '/') ? 'zh-CN' : 'en'}"`)) errors.push(`${file}: missing title/lang`)
+  const locale = routeLocales[relative(root, file).split(sep)[0]] ?? 'en'
+  if (!text.includes('<title>') || !text.includes(`<html lang="${locale}"`)) errors.push(`${file}: missing title/lang`)
   for (const match of text.matchAll(/(?:href|src)="([^"#]+)(?:#[^"]*)?"/g)) {
     const url=match[1].split('?')[0]
     if (!url.startsWith('/wardrobe-website/')) continue

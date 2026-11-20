@@ -1,5 +1,5 @@
 ---
-import { translations } from "../../lib/language"
+import { translations } from "../../lib/translate"
 import Base from '../../layouts/Base.astro'
 import Icon from '../../components/Icon.astro'
 import { releases, downloadUrl, formatSize, formatDate, releaseSummary } from '../../lib/releases'
@@ -12,7 +12,7 @@ const [latest, ...older] = await releases()
 <Base title={t("Previous versions", "历史版本")} page="download" description={t("Past Wardrobe APKs and their checksums.", "小衣柜的历史版本安装包与校验值。")}>
   <section class="head">
     <div class="wrap">
-      <span class="eyebrow">Previous versions</span>
+      <span class="eyebrow">{t("Previous versions", "历史版本")}</span>
       <h1>{t("Previous versions", "历史版本")}</h1>
       <p class="muted">
         {t("The current release is", "当前最新版本为")} <a href={`${base}download/`}>v{latest.data.version}</a>{t(".", "。")}

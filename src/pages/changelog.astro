@@ -1,5 +1,5 @@
 ---
-import { translations } from "../lib/language"
+import { translations } from "../lib/translate"
 import Base from '../layouts/Base.astro'
 import ReleaseEntry from '../components/ReleaseEntry.astro'
 import { releases } from '../lib/releases'
@@ -16,7 +16,7 @@ const older = all.slice(SHOWN)
 <Base title={t("Changelog", "更新日志")} page="changelog" description={t("Release notes for every version of Wardrobe.", "小衣柜每个版本的更新说明。")}>
   <section class="head">
     <div class="wrap">
-      <span class="eyebrow">Release notes</span>
+      <span class="eyebrow">{t("Release notes", "更新说明")}</span>
       <h1>{t("Changelog", "更新日志")}</h1>
     </div>
   </section>
@@ -30,7 +30,7 @@ const older = all.slice(SHOWN)
             <summary>
               <span>{t("More versions", "更多版本")}</span>
               <span class="muted">
-                v{older[older.length - 1].data.version} – v{older[0].data.version} · {t(`${older.length} versions`, `共 ${older.length} 个`)}
+                v{older[older.length - 1].data.version} – v{older[0].data.version} · {t("{count} versions", "共 {count} 个", { count: older.length })}
               </span>
             </summary>
             {older.map((r) => (

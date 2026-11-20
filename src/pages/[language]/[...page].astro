@@ -5,9 +5,10 @@ import DownloadHistory from '../download/history.astro'
 import Changelog from '../changelog.astro'
 import Privacy from '../privacy.astro'
 import NotFound from '../404.astro'
+import { languages } from '../../lib/language'
 
 export function getStaticPaths() {
-  return [
+  const pages = [
     { params: { page: undefined }, props: { Page: Home } },
     { params: { page: 'download' }, props: { Page: Download } },
     { params: { page: 'download/history' }, props: { Page: DownloadHistory } },
@@ -15,6 +16,9 @@ export function getStaticPaths() {
     { params: { page: 'privacy' }, props: { Page: Privacy } },
     { params: { page: '404' }, props: { Page: NotFound } },
   ]
+  return Object.keys(languages).filter(language => language !== 'en').flatMap(language =>
+    pages.map(({ params, props }) => ({ params: { language, ...params }, props })),
+  )
 }
 
 const { Page } = Astro.props

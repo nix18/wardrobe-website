@@ -1,7 +1,13 @@
 import { getCollection, type CollectionEntry } from 'astro:content'
 import summaries from '../data/release-summaries.en.json'
+
 import { type Language } from './language'
 import { compareVersions } from '../../scripts/release-utils.mjs'
+
+const localizedSummaries = import.meta.glob<Record<string, string>>('../data/releases/*/summaries.json', {
+  eager: true,
+  import: 'default',
+})
 
 export const REPO = 'nix18/wardrobe-website'
 export const REPO_URL = `https://github.com/${REPO}`
@@ -31,6 +37,8 @@ export const isoDate = (date: Date) => date.toISOString().slice(0, 10)
 
 export function releaseSummary(release: Release, language: Language) {
   if (language === 'zh') return release.data.summary
-  const translations: Record<string, string> = summaries
-  return translations[release.data.version] ?? `Wardrobe v${release.data.version}`
+  const version = release.data.version
+  const translated = localizedSummaries[`../data/releases/${language}/summaries.json`]?.[version]
+  const english: Record<string, string> = summaries
+  return translated ?? english[version] ?? `Wardrobe v${version}`
 }

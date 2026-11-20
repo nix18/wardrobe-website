@@ -34,7 +34,7 @@ Wardrobe is an Android app for organizing clothes, tagging photos with AI, searc
 | `/changelog/` | Changelog with the latest three releases expanded |
 | `/privacy/` | App privacy policy and the website’s language lookup disclosure |
 
-Prefix a path with `/zh` to open its Simplified Chinese counterpart. The site uses ipapi.co to infer country or region from the visitor’s IP address. Visitors from mainland China, Hong Kong, Macao, and Taiwan see Simplified Chinese by default. Other regions and failed lookups fall back to English. The header language switch saves the visitor’s choice in their browser. The pages are pre-rendered and work without JavaScript through their direct links.
+Use `/zh/`, `/zh-hant/`, `/fr/`, `/pt/`, `/es/`, `/de/`, or `/ja/` for Simplified Chinese, Traditional Chinese, French, Portuguese, Spanish, German, or Japanese. English uses the unprefixed paths. The site uses ipapi.co to infer the visitor’s country or region, including Traditional Chinese for Taiwan, Hong Kong, and Macao and Simplified Chinese for mainland China. English is the fallback. The header language menu remembers a manual choice. All locales have static URLs that work without JavaScript.
 
 Shared styles are in `src/styles/global.css`. The site follows the visitor’s color scheme and honors reduced-motion settings for the screenshot gallery.
 

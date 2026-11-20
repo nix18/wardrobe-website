@@ -1,0 +1,19 @@
+{
+  "1.0.0": "Erste stabile Version: Verwalten Sie Kleidungsstücke, markieren Sie Fotos mit KI, suchen und finden Sie Duplikate, generieren Sie drei virtuelle Anprobe-Ansichten und synchronisieren Sie sie über Geräte hinweg.",
+  "1.0.1": "Das KI-generierte Abzeichen ist jetzt eine Glaskapsel unten rechts im Bild, sichtbar vor jedem Hintergrund.",
+  "1.0.10": "Feste APK-Installation auf OPPO-, Realme- und OnePlus-Telefonen, die eine Legacy-Signatur erfordern.",
+  "1.0.11": "Feste Gesichts- und Nackennähte in der Seitenansicht virtuelle Anprobe mit Posen und machten die Eröffnung der virtuelle Anprobe-Historie aus Profil zuverlässiger.",
+  "1.0.12": "Generieren Sie vier Ansichten eines Modells zusammen. Make-up-, Retusche- und Ausdrucksoptionen mit einem weichen Porträtstil standardmäßig hinzugefügt.",
+  "1.0.13": "Fotoposen behalten die ursprünglichen gebeugten Knie, Gesten und Perspektiven in allen drei virtuelle Anprobe-Ansichten bei.",
+  "1.0.14": "Wählen Sie ein eingebautes Studio oder extrahieren Sie einen Hintergrund aus einem Foto. Generieren Sie Outfit, Pose und Hintergrund in drei Ansichten.",
+  "1.0.15": "Identifizieren Sie geschichtete Kleidungsstücke einzeln, überprüfen Sie ihre Ernten und Ordnung und bewahren Sie die linke / rechte Platzierung und Kleidungsstückkonstruktion in Rückansichten auf.",
+  "1.0.15-r1": "Vereinheitlichte Artikelkategorien und Suche, zeigen jedes ausgewählte Kleidungsstück in der virtuelle Anprobe-Historie an und verbessern die Headband-Suche und die Konsistenz der Zubehörteile in den Ansichten.",
+  "1.0.2": "Generierte Modelle und virtuelle Anprobe-Bilder verwenden jetzt weiche, gleichmäßige Beleuchtung für natürlichere Gesichter.",
+  "1.0.3": "Feste diagonale Gitterschatten auf Gesichtern in KI-generierten Modellen und virtuelle Anprobe-Bildern.",
+  "1.0.4": "Bereinigte Gittermuster und Korn, bevor KI-Bilder als Referenzen wiederverwendet wurden, wodurch Artefakte aus wiederholten Bearbeitungen reduziert wurden.",
+  "1.0.5": "Zusätzliche Gesichtsveredelung und Verkürzung der Referenzpipeline; Verbindungsfehler werden nun als solche gemeldet.",
+  "1.0.6": "Ausgeglichene Hauttöne und entfernte gelbgraue Flecken und dunkle Bereiche um das Kinn.",
+  "1.0.7": "wardrobe und aktuelle Artikelfotos nach dem Backup-Import wiederhergestellt, wobei fehlende Miniaturansichten automatisch regeneriert wurden.",
+  "1.0.8": "Die Virtuelle Anprobe-Ergebnisse behalten die Gesichtsidentität des Modells über alle Outfit-Änderungen hinweg bei, mit weniger Patches, Schatten und Verzerrungen.",
+  "1.0.9": "Restaurierte Pose-Erstellung aus Fotos und Gesichtsverarbeitung. Die Bilderzeugung setzt sich nun im Hintergrund fort."
+}

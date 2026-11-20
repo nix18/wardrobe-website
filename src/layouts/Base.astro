@@ -1,7 +1,8 @@
 ---
 import '../styles/global.css'
 import Logo from '../components/Logo.astro'
-import { languagePath, translations } from '../lib/language'
+import { languagePath, languages, type Language } from '../lib/language'
+import { translations } from '../lib/translate'
 import { latest, downloadUrl } from '../lib/releases'
 
 interface Props {
@@ -12,9 +13,7 @@ interface Props {
 }
 
 const { language, base, locale, t } = translations(Astro.url.pathname)
-const alternate = language === 'zh' ? 'en' : 'zh'
-const alternateLocale = alternate === 'zh' ? 'zh-CN' : 'en'
-const alternatePath = languagePath(Astro.url.pathname, alternate)
+const options = Object.entries(languages) as [Language, (typeof languages)[Language]][]
 const brand = t('Wardrobe', '小衣柜')
 const {
   title,
@@ -41,8 +40,9 @@ const nav = [
     <title>{fullTitle}</title>
     <meta name="description" content={description} />
     <link rel="canonical" href={canonical} />
-    <link rel="alternate" hreflang={locale} href={canonical} />
-    <link rel="alternate" hreflang={alternateLocale} href={new URL(alternatePath, Astro.site)} />
+    {options.map(([code, option]) => (
+      <link rel="alternate" hreflang={option.locale} href={new URL(languagePath(Astro.url.pathname, code), Astro.site)} />
+    ))}
     <link rel="alternate" hreflang="x-default" href={new URL(languagePath(Astro.url.pathname, 'en'), Astro.site)} />
     <link rel="icon" href={`${import.meta.env.BASE_URL}favicon.svg`} type="image/svg+xml" />
     <link rel="apple-touch-icon" href={`${import.meta.env.BASE_URL}icon-180.png`} />
@@ -77,9 +77,23 @@ const nav = [
             }
           </ul>
         </nav>
-        <a class="language-switch" href={`${alternatePath}?lang=${alternate}`} hreflang={alternateLocale} lang={alternateLocale} data-language-switch>
-          {alternate === 'en' ? 'English' : '中文'}
-        </a>
+        <details class="language-switch">
+          <summary aria-label={t('Language', '语言')}>
+            <span aria-hidden="true">{language === 'zh-hant' ? '繁' : language === 'zh' ? '简' : language.toUpperCase()}</span>
+          </summary>
+          <ul aria-label={t('Language', '语言')}>
+            {options.map(([code, option]) => (
+              <li>
+                <a href={`${languagePath(Astro.url.pathname, code)}?lang=${code}`}
+                  lang={option.locale} hreflang={option.locale}
+                  aria-current={language === code ? 'true' : undefined}
+                  data-language-choice={code}>
+                  {option.name}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </details>
         <a class="btn btn-primary btn-sm header-cta" href={downloadUrl(release.data.version)} data-download>
           {t('Download', '下载')} v{release.data.version}
         </a>
@@ -196,6 +210,7 @@ const nav = [
   }
 
   nav {
+    min-width: 0;
     margin-left: auto;
   }
 
@@ -225,14 +240,49 @@ const nav = [
   }
 
   .language-switch {
+    position: relative;
     color: var(--ink-2);
-    white-space: nowrap;
     font-size: 14px;
-    padding-block: 8px;
+    flex: 0 0 auto;
   }
 
-  .language-switch:hover {
-    color: var(--clay-ink);
+  .language-switch summary {
+    cursor: pointer;
+    display: grid;
+    place-items: center;
+    min-width: 30px;
+    min-height: 36px;
+    list-style: none;
+  }
+
+  .language-switch summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .language-switch ul {
+    z-index: 1;
+    position: absolute;
+    inset-inline-end: 0;
+    top: 100%;
+    min-width: 132px;
+    margin: 4px 0 0;
+    padding: 5px;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    background: var(--card);
+    list-style: none;
+  }
+
+  .language-switch a {
+    display: block;
+    padding: 6px 10px;
+    border-radius: 6px;
+    white-space: nowrap;
+  }
+
+  .language-switch a:hover,
+  .language-switch a[aria-current] {
+    background: var(--paper-2);
   }
 
   @media (max-width: 760px) {
@@ -263,6 +313,9 @@ const nav = [
       width: 26px;
       height: 26px;
       flex-shrink: 0;
+    }
+    nav ul li:nth-child(3) {
+      display: none;
     }
     nav a {
       padding-inline: 3px;

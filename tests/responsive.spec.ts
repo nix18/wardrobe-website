@@ -59,6 +59,17 @@ test.describe('mobile pages', () => {
     })
   }
 
+  for (const language of ['zh-hant', 'es', 'fr', 'pt', 'de', 'ja']) {
+    for (const route of ['', 'download/', 'download/history/', 'privacy/']) {
+      test(`320px ${language}/${route} fits the viewport`, async ({ page }) => {
+        await page.setViewportSize({ width: 320, height: 844 })
+        await page.goto(`${language}/${route}`)
+        await settle(page)
+        await fitsViewport(page)
+      })
+    }
+  }
+
   for (const width of [320, 390]) {
     for (const reducedMotion of ['reduce', 'no-preference'] as const) {
       test(`home scroll ${width}px ${reducedMotion}`, async ({ page }) => {

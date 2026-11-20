@@ -1,5 +1,5 @@
 ---
-import { translations } from "../lib/language"
+import { translations } from "../lib/translate"
 import ReleaseNotes from '../components/ReleaseNotes.astro'
 import Base from '../layouts/Base.astro'
 import Logo from '../components/Logo.astro'
@@ -12,10 +12,10 @@ const latest = await latestRelease()
 const v = latest.data.version
 ---
 
-<Base title={t("Download", "下载")} page="download" description={t(`Download Wardrobe v${v} for Android 8.0 or later (${formatSize(latest.data.size)}). Includes installation and verification instructions.`, `下载小衣柜 v${v}（Android 8.0 及以上，${formatSize(latest.data.size)}）。安装步骤与校验方法。`)}>
+<Base title={t("Download", "下载")} page="download" description={t("Download Wardrobe v{version} for Android 8.0 or later ({size}). Includes installation and verification instructions.", "下载小衣柜 v{version}（Android 8.0 及以上，{size}）。安装步骤与校验方法。", { version: v, size: formatSize(latest.data.size) })}>
   <section class="dl-hero">
     <div class="wrap">
-      <span class="eyebrow">Download</span>
+      <span class="eyebrow">{t("Download", "下载")}</span>
       <h1>{t("Download Wardrobe", "下载小衣柜")}</h1>
       <p class="muted">{t("For phones and tablets running Android 8.0 or later. Free to download, with your own AI provider.", "适用于 Android 8.0 及以上的手机与平板。免费，使用你自己的 AI 服务。")}</p>
 
@@ -85,7 +85,7 @@ shasum -a 256 {apkName(v)}</code></pre>
   <section class="section-sm">
     <div class="wrap two-col">
       <div>
-        <h2 class="h-sm">{t(`What’s new in v${v}`, `v${v} 更新内容`)}</h2>
+        <h2 class="h-sm">{t("What’s new in v{version}", "v{version} 更新内容", { version: v })}</h2>
         <a class="link" href={releaseUrl(v)}>{t("View on GitHub", "在 GitHub 上查看")} <Icon name="arrow" size={16} /></a>
       </div>
       <article class="prose card notes">

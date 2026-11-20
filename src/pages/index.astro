@@ -1,5 +1,5 @@
 ---
-import { translations } from "../lib/language"
+import { translations } from "../lib/translate"
 import { Picture } from 'astro:assets'
 import Base from '../layouts/Base.astro'
 import Phone from '../components/Phone.astro'
@@ -80,7 +80,7 @@ const faqs = [
   <section class="hero">
     <div class="wrap hero-grid">
       <div class="hero-copy">
-        <span class="eyebrow reveal">Wardrobe, organized by AI</span>
+        <span class="eyebrow reveal">{t("Wardrobe, organized by AI", "AI 智能整理衣柜")}</span>
         <h1 class="reveal" style="--delay: .05s"><span>{t("Your wardrobe,", "你的衣柜，")}</span><span>{t("organized and ready to try on.", "会整理，也会试穿。")}</span></h1>
         <p class="lead reveal" style="--delay: .1s">
           {t("Photograph your clothes to tag categories, colors, seasons, and materials with AI. Find what you want to wear in your own words, then choose an outfit and a model to generate front, side, and back try-on images.", "拍下衣服，AI 自动补全类别、颜色、季节和材质；想穿什么，用一句话就能找到。挑几件搭配、选一位模特，生成正面、侧面、背面三张试穿图。")}
@@ -228,11 +228,11 @@ const faqs = [
               [
                 { src: front, label: t("Front", "正面") },
                 { src: side, label: t("Side", "侧面") },
-                { src: back, label: t("Back", "背面") },
+                { src: back, label: t("Back view", "背面") },
               ].map((view) => (
                 <figure>
                   <div class="photo-tile view">
-                    <Picture src={view.src} alt={t(`Try-on: ${view.label}`, `试穿效果：${view.label}`)} widths={[260, 520]} sizes="(max-width: 760px) 30vw, 200px" formats={['avif', 'webp']} />
+                    <Picture src={view.src} alt={t("Try-on: {view}", "试穿效果：{view}", { view: view.label })} widths={[260, 520]} sizes="(max-width: 760px) 30vw, 200px" formats={['avif', 'webp']} />
                     <AiMark />
                   </div>
                   <figcaption>{view.label}</figcaption>
@@ -262,7 +262,7 @@ const faqs = [
   <section class="section privacy-band">
     <div class="wrap">
       <div class="section-head reveal">
-        <span class="eyebrow">Your data, your device</span>
+        <span class="eyebrow">{t("Your data, your device", "数据就在你的设备上")}</span>
         <h2>{t("Your wardrobe, your data", "衣柜是你的，数据也是")}</h2>
         <p>{t("Wardrobe has no app backend. Clothes, photos, and try-on history stay on your phone. To use multiple devices, sync to your own cloud storage.", "小衣柜没有自己的服务器。衣物、照片和试穿记录保存在手机里，想在多台设备上用，就同步到你自己的网盘。")}</p>
       </div>
@@ -302,7 +302,7 @@ const faqs = [
     <div class="hs-sticky">
       <div class="wrap">
         <div class="section-head reveal">
-          <span class="eyebrow">Designed to stay out of the way</span>
+          <span class="eyebrow">{t("Designed to stay out of the way", "轻松整理衣柜")}</span>
           <h2>{t("A simple interface that puts your clothes first", "界面克制，让衣服成为主角")}</h2>
           <p>{t("Rounded white cards sit on a light gray canvas, with clay accents for selections, favorites, and primary actions. Dark mode and system wallpaper colors are supported.", "浅灰画布上的白色圆角卡片，陶土色只用在选中、收藏和主要按钮上。支持深色模式，也能跟随系统壁纸取色。")}</p>
         </div>
@@ -332,7 +332,7 @@ const faqs = [
   <section class="section updates">
     <div class="wrap updates-grid">
       <div class="section-head reveal">
-        <span class="eyebrow">Release notes</span>
+        <span class="eyebrow">{t("Release notes", "更新说明")}</span>
         <h2>{t("Latest updates", "持续更新")}</h2>
         <a class="btn btn-ghost" href={`${base}changelog/`}>
           {t("Full changelog", "全部更新日志")}
@@ -393,7 +393,7 @@ const faqs = [
         <div class="hero-actions">
           <a class="btn btn-primary" href={downloadUrl(v)} data-download>
             <Icon name="download" size={20} />
-            {t('Download', t("Download", "下载"))} v{v}
+            {t("Download", "下载")} v{v}
             <small>{formatSize(latest.data.size)}</small>
           </a>
           <a class="btn btn-ghost on-dark" href={`${base}download/`}>{t("Installation instructions", "安装说明")}</a>
@@ -485,11 +485,7 @@ const faqs = [
 
   .hero h1 span {
     display: block;
-    white-space: nowrap;
-  }
-
-  :global(html[lang="en"]) .hero h1 span {
-    white-space: normal;
+    overflow-wrap: anywhere;
   }
 
   .lead {
@@ -1154,8 +1150,16 @@ const faqs = [
   }
 
   .updates .section-head {
+    min-width: 0;
+    overflow-wrap: anywhere;
     align-content: start;
     justify-items: start;
+  }
+
+  .updates .section-head .btn {
+    max-width: 100%;
+    white-space: normal;
+    text-align: start;
   }
 
   .timeline {
@@ -1349,7 +1353,7 @@ const faqs = [
       padding: 0 12px;
       gap: 6px;
       font-size: 14px;
-      white-space: nowrap;
+      white-space: normal;
       flex-wrap: nowrap;
       text-align: center;
     }

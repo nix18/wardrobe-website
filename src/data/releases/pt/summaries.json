@@ -1,0 +1,19 @@
+{
+  "1.0.0": "Primeira versão estável: gerenciar roupas, fotos de tags com IA, pesquisar e encontrar duplicatas, gerar três visualizações prova virtual e sincronizar entre dispositivos.",
+  "1.0.1": "O crachá gerado pela IA é agora uma cápsula de vidro no fundo direito da imagem, visível contra qualquer fundo.",
+  "1.0.10": "Instalação fixa do APK em telefones OPPO, realme e OnePlus que exigem uma assinatura legada.",
+  "1.0.11": "Fixo face e pescoço costuras na visão lateral prova virtual com poses e tornou a abertura prova virtual história do perfil mais confiável.",
+  "1.0.12": "Gerar quatro visualizações de um modelo juntos. Adicionado maquiagem, retoque, e opções de expressão com um estilo de retrato suave por padrão.",
+  "1.0.13": "Poses de fotos retêm os joelhos dobrados originais, gestos e perspectiva em todas as três vistas prova virtual.",
+  "1.0.14": "Escolha um estúdio embutido ou extraia um fundo de uma foto. Gere roupas, pose e fundo juntos em três visualizações.",
+  "1.0.15": "Identifique as roupas em camadas individualmente, reveja suas culturas e ordem, e preservar a colocação esquerda/direita e construção de vestuário em vistas traseiras.",
+  "1.0.15-r1": "Categorias de itens unificados e pesquisa, mostrar cada vestuário selecionado no histórico prova virtual, e melhorar a busca de headband e consistência acessório através de visualizações.",
+  "1.0.2": "Modelos gerados e imagens de prova virtual agora usam iluminação suave, mesmo para rostos mais naturais.",
+  "1.0.3": "Sombras de grade diagonal fixas em faces em modelo gerado por IA e imagens de prova virtual.",
+  "1.0.4": "Limpei padrões de grade e grãos antes de reutilizar imagens IA como referências, reduzindo artefatos de edições repetidas.",
+  "1.0.5": "Adicionado refinamento de face e encurtado o pipeline de referência. Erros de conexão agora são relatados como tal.",
+  "1.0.6": "Equilibrar os tons de pele e remover manchas amarelas-cinzentadas e áreas escuras ao redor do queixo.",
+  "1.0.7": "Restaurado wardrobe e fotos de itens recentes após a importação de backup, com falta de miniaturas regenerados automaticamente.",
+  "1.0.8": "Os resultados do Prova virtual mantêm a identidade facial do modelo através de mudanças de roupa, com menos patches, sombras e distorções.",
+  "1.0.9": "Criação de pose restaurada a partir de fotos e processamento de face. A geração de imagens agora continua em segundo plano."
+}

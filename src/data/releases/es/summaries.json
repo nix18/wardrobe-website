@@ -1,0 +1,19 @@
+{
+  "1.0.0": "Primer lanzamiento estable: gestionar prendas, etiquetar fotos con IA, buscar y encontrar duplicados, generar tres vistas prueba virtual, y sincronizar entre dispositivos.",
+  "1.0.1": "La placa generada por IA es ahora una cápsula de vidrio en la parte inferior derecha de la imagen, visible en cualquier fondo.",
+  "1.0.10": "Instalación fija APK en OPPO, realme y OnePlus teléfonos que requieren una firma heredada.",
+  "1.0.11": "Las costuras fijas de cara y cuello en la vista lateral prueba virtual con poses y la apertura prueba virtual historia de perfil más confiable.",
+  "1.0.12": "Generar cuatro vistas de un modelo juntos. Añadido maquillaje, retoque y opciones de expresión con un estilo de retrato suave por defecto.",
+  "1.0.13": "Las poses fotográficas conservan las rodillas, gestos y perspectiva dobladas originales en las tres vistas prueba virtual.",
+  "1.0.14": "Elija un estudio integrado o extraiga un fondo de una foto. Generar conjunto, pose y fondo juntos en tres vistas.",
+  "1.0.15": "Identificar prendas capas individualmente, revisar sus cultivos y orden, y preservar la colocación izquierda/derecha y la construcción de prendas en las vistas traseras.",
+  "1.0.15-r1": "Categorías de elementos unificados y búsqueda, mostrar cada prenda seleccionada en la historia de prueba virtual, y mejorar la búsqueda de la banda de la cabeza y la consistencia accesoria a través de las vistas.",
+  "1.0.2": "Los modelos generados y las imágenes de prueba virtual ahora usan suave, incluso iluminación para caras más naturales.",
+  "1.0.3": "Sombras fijas de rejilla diagonal en las caras en el modelo IA y las imágenes de prueba virtual.",
+  "1.0.4": "Limpiar patrones de rejilla y grano antes de reutilizar imágenes IA como referencias, reduciendo artefactos de ediciones repetidas.",
+  "1.0.5": "Añadido refinamiento facial y acortado el oleoducto de referencia. Los errores de conexión ahora se reportan como tales.",
+  "1.0.6": "Apareció tonos de piel y removió parches amarillo-gray y áreas oscuras alrededor de la barbilla.",
+  "1.0.7": "Restaurado wardrobe y fotos recientes del artículo después de la importación de copia de seguridad, con miniaturas perdidas regeneradas automáticamente.",
+  "1.0.8": "Los resultados de Prueba virtual conservan la identidad facial del modelo a través de los cambios de traje, con menos parches, sombras y distorsiones.",
+  "1.0.9": "Creación de pose restaurada de fotos y procesamiento facial. Generación de imágenes ahora continúa en el fondo."
+}
