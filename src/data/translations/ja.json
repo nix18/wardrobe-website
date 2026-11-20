@@ -144,7 +144,7 @@
   "The same design, easier on the eyes at night": "夜に目を見やすく、同じデザイン",
   "This page is missing from the wardrobe": "このページはwardrobeから欠落しています",
   "Three views": "3つのビュー",
-  "To select a language on your first visit, the website asks country.is for the country associated with your IP address. The provider receives the IP address as part of that request. This does not send any data from the Android app. Selecting a language manually saves that choice in your browser and skips future lookups.": "最初の訪問で言語を選択するには、WebサイトはIPapi.coにあなたのIPアドレスに関連付けられている国を尋ねます。 プロバイダは、その要求の一部としてIPアドレスを受け取ります。 これは、Androidアプリから任意のデータを送信しません。 手動で言語を選択すると、ブラウザでその選択を保存し、将来の検索をスキップします。",
+  "To select a language on your first visit, the website asks country.is for the country associated with your IP address. The provider receives the IP address as part of that request. This does not send any data from the Android app. Selecting a language manually saves that choice in your browser and skips future lookups.": "初めてアクセスしたとき、ウェブサイトは表示言語を選ぶため、IPアドレスに対応する国や地域を country.is に問い合わせます。この問い合わせで、サービス提供元にIPアドレスが送信されます。Androidアプリのデータは送信されません。言語を手動で選ぶと、その設定がブラウザーに保存され、次回以降はこの問い合わせを行いません。",
   "Try-on backgrounds": "バーチャル試着の背景",
   "Try-on: {view}": "バーチャル試着: {view}",
   "Two-column layout with photos in their original proportions": "オリジナルの比率で写真付きの2列レイアウト",
