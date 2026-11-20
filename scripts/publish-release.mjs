@@ -16,7 +16,7 @@ const summary=option('summary');if(!summary) throw new Error('需要 --summary �
 const date=option('date')??new Date().toISOString()
 if(Number.isNaN(Date.parse(date))) throw new Error('无效的发布日期')
 const gh=(params)=>execFileSync('gh',params,{encoding:'utf8'})
-const release=(repo)=>JSON.parse(gh(['release','view',`v${version}`,'--repo',repo,'--json','tagName,body,assets']))
+const release=(repo)=>JSON.parse(gh(['api',`repos/${repo}/releases/tags/v${version}`]))
 const expected=`wardrobe-${version}.apk`
 const work=mkdtempSync(join(root,'.release-work-'))
 try {

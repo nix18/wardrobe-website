@@ -74,7 +74,7 @@ Pages 来源保持 **Deploy from a branch → gh-pages → /**，`github-pages` 
 | `src/assets/screens/` | 应用的截图测试 | 在应用仓库跑 `./gradlew :app:testDebugUnitTest -Pscreenshots` |
 | `src/assets/photos/` | 图像模型，提示词在 `art/photo-prompts.mjs` | `npm run gen-images`，要设 `IMAGE_API_BASE`、`IMAGE_API_KEY` |
 | `public/og.png`、`public/icon-180.png` | 分享预览图、触屏图标 | `npm run og-image` |
-| `docs/readme/` | 这份 README 的配图 | `npm run readme-images`，网站预览图要另外传两张截图 |
+| `docs/readme/` | 这份 README 的配图 | `npm run readme-images`。网站预览图需要桌面与手机截图。英文配图用 `README_LANGUAGE=en` 和 `README_SCREEN_DIR` 指定英文应用截图。 |
 
 示例照片也是应用截图测试里的样图。网站上的模特、衣物和试穿图都是 AI 生成的，页脚写明了。
 

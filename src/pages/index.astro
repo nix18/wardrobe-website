@@ -111,7 +111,7 @@ const faqs = [
           <Picture src={front} alt="" widths={[360, 720]} sizes="360px" formats={['avif', 'webp']} loading="eager" />
           <AiMark />
         </div>
-        <Phone screen={shots.wardrobe} alt="" width={262} eager class="hero-phone reveal" />
+        <Phone screen={language === "en" ? shots.wardrobeEnglish : shots.wardrobe} alt="" width={262} eager class="hero-phone reveal" />
         <div class="float-card tags reveal" style="--delay: .35s">
           <span class="float-title"><Icon name="sparkle" size={15} />
 {t("AI tagging complete", "AI 识别完成")}</span>

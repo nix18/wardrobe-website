@@ -18,11 +18,11 @@
   <img src="https://img.shields.io/badge/Astro-7-FF5D01?logo=astro&logoColor=white" alt="Astro 7">
 </p>
 
-![Website homepage and mobile download page](docs/readme/site.png)
+![Website homepage and mobile download page](docs/readme/en/site.png)
 
 Wardrobe is an Android app for organizing clothes, tagging photos with AI, searching in your own words, and generating front, side, and back try-on views. This repository hosts its website and [public APK releases](https://github.com/nix18/wardrobe-website/releases).
 
-![Five main screens in the app](docs/readme/banner.png)
+![Five main screens in the app](docs/readme/en/banner.png)
 
 ## Pages and languages
 
@@ -75,6 +75,6 @@ The Pages workflow tests and builds the site, updates `gh-pages` with the verifi
 | `src/assets/screens/` | Run `./gradlew :app:testDebugUnitTest -Pscreenshots` in the app repository |
 | `src/assets/photos/` | Run `npm run gen-images` with `IMAGE_API_BASE` and `IMAGE_API_KEY`. Prompts are in `art/photo-prompts.mjs`. |
 | `public/og.png`, `public/icon-180.png` | Run `npm run og-image` |
-| `docs/readme/` | Run `npm run readme-images`. The website preview also needs two screenshots. |
+| `docs/readme/` | Run `npm run readme-images`. Pass desktop and mobile site captures to generate `site.png`. Use `README_LANGUAGE=en` with `README_SCREEN_DIR` pointed at English app screenshots for the English images. |
 
 The model, garment, and try-on photos on the site are AI-generated examples.
