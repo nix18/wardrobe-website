@@ -1,10 +1,11 @@
 ---
+import { translations } from "../lib/language"
 import { Picture } from 'astro:assets'
 import Base from '../layouts/Base.astro'
 import Phone from '../components/Phone.astro'
 import AiMark from '../components/AiMark.astro'
 import Icon from '../components/Icon.astro'
-import { releases, downloadUrl, formatSize, formatDate } from '../lib/releases'
+import { releases, downloadUrl, formatSize, formatDate, releaseSummary } from '../lib/releases'
 
 import { screens as shots } from '../lib/screens'
 
@@ -17,57 +18,59 @@ import side from '../assets/photos/look2_side.jpg'
 import back from '../assets/photos/look2_back.jpg'
 import aiDark from '../assets/photos/ai_dark.jpg'
 
+const { t, base, locale, language } = translations(Astro.url.pathname)
+
 const all = await releases()
 const latest = all[0]
 const v = latest.data.version
 
 const screens = [
-  { screen: shots.wardrobe, title: '衣柜', text: '双列瀑布流，照片按原比例展示' },
-  { screen: shots.detail, title: '衣物详情', text: '多张照片、AI 描述与标签' },
-  { screen: shots.search, title: '搜索', text: '标签筛选与自然语言' },
-  { screen: shots.tryOn, title: 'AI 试穿', text: '模特、衣物、动作、背景与视角' },
-  { screen: shots.me, title: '我的', text: '衣橱概览与常用入口' },
-  { screen: shots.drawer, title: '侧边栏', text: '批量导入、分类、AI 服务、同步' },
-  { screen: shots.addSheet, title: '添加衣物', text: '拍照、相册多选、批量导入' },
-  { screen: shots.backgrounds, title: '试穿背景', text: '内置影棚与从照片提取的空场景' },
-  { screen: shots.wardrobeDark, title: '深色模式', text: '同一套设计，夜里也舒服' },
-  { screen: shots.wardrobeDynamic, title: '壁纸取色', text: '整套界面跟随系统配色' },
-  { screen: shots.meDark, title: '我的 · 深色', text: '' },
+  { screen: shots.wardrobe, title: t("Wardrobe", "衣柜"), text: t("Two-column layout with photos in their original proportions", "双列瀑布流，照片按原比例展示") },
+  { screen: shots.detail, title: t("Garment details", "衣物详情"), text: t("Multiple photos, AI descriptions, and tags", "多张照片、AI 描述与标签") },
+  { screen: shots.search, title: t("Search", "搜索"), text: t("Tag filters and natural-language search", "标签筛选与自然语言") },
+  { screen: shots.tryOn, title: t("AI try-on", "AI 试穿"), text: t("Models, garments, poses, backgrounds, and views", "模特、衣物、动作、背景与视角") },
+  { screen: shots.me, title: t("Profile", "我的"), text: t("A wardrobe overview and shortcuts", "衣橱概览与常用入口") },
+  { screen: shots.drawer, title: t("Sidebar", "侧边栏"), text: t("Bulk import, categories, AI services, and sync", "批量导入、分类、AI 服务、同步") },
+  { screen: shots.addSheet, title: t("Add garments", "添加衣物"), text: t("Take a photo or import several from your gallery", "拍照、相册多选、批量导入") },
+  { screen: shots.backgrounds, title: t("Try-on backgrounds", "试穿背景"), text: t("Built-in studios and empty scenes extracted from photos", "内置影棚与从照片提取的空场景") },
+  { screen: shots.wardrobeDark, title: t("Dark mode", "深色模式"), text: t("The same design, easier on the eyes at night", "同一套设计，夜里也舒服") },
+  { screen: shots.wardrobeDynamic, title: t("Wallpaper colors", "壁纸取色"), text: t("The interface follows your system colors", "整套界面跟随系统配色") },
+  { screen: shots.meDark, title: t("Profile in dark mode", "我的 · 深色"), text: '' },
 ]
 
 const details = [
-  { icon: 'layers', title: '多件叠穿', text: '每个部位都能多选，一次最多 8 件。先选的穿在里层，后选的套在外面。' },
-  { icon: 'pose', title: '动作模板', text: '11 个内置动作，也可从照片创建自己的动作，试穿时参考原图的姿势与手势。' },
-  { icon: 'mannequin', title: '你的模特', text: '6 种预置身材，或上传自己的照片生成标准形象；身高、三围可按国标号型推荐。' },
-  { icon: 'face', title: '外观风格', text: '妆容、美颜、表情和画面风格可选，默认是讨喜的甜美写真；试穿时还能临时换一套。' },
-  { icon: 'duplicate', title: '以图查重', text: '新衣服先拍一张：向量召回候选，再让模型逐一比对，避免买重。' },
-  { icon: 'pose', title: '背景模板', text: '选择内置影棚，或从照片提取空场景。三个视角共用同一背景，换装与背景一次完成。' },
-  { icon: 'tag', title: 'AI 生成标识', text: 'AI 图片按 GB 45438-2025 加显式标识，并在文件中写入隐式标识。' },
+  { icon: 'layers', title: t("Layer garments", "多件叠穿"), text: t("Select up to eight garments across body areas. Select inner layers first and outer layers last.", "每个部位都能多选，一次最多 8 件。先选的穿在里层，后选的套在外面。") },
+  { icon: 'pose', title: t("Pose templates", "动作模板"), text: t("Use one of 11 built-in poses or create your own from a photo. The try-on uses the original pose and gestures as references.", "11 个内置动作，也可从照片创建自己的动作，试穿时参考原图的姿势与手势。") },
+  { icon: 'mannequin', title: t("Your model", "你的模特"), text: t("Choose from six body presets or upload a photo to create a reference model. The app can suggest measurements using Chinese national sizing standards.", "6 种预置身材，或上传自己的照片生成标准形象；身高、三围可按国标号型推荐。") },
+  { icon: 'face', title: t("Appearance", "外观风格"), text: t("Pick makeup, retouching, expressions, and a visual style. The default is a soft portrait look, and you can change it for each try-on.", "妆容、美颜、表情和画面风格可选，默认是讨喜的甜美写真；试穿时还能临时换一套。") },
+  { icon: 'duplicate', title: t("Find duplicates by photo", "以图查重"), text: t("Photograph an item before buying it. Vector search finds similar items, then an AI model checks them one by one.", "新衣服先拍一张：向量召回候选，再让模型逐一比对，避免买重。") },
+  { icon: 'pose', title: t("Background templates", "背景模板"), text: t("Pick a built-in studio or extract an empty scene from a photo. All three views share the same background.", "选择内置影棚，或从照片提取空场景。三个视角共用同一背景，换装与背景一次完成。") },
+  { icon: 'tag', title: t("AI-generated labels", "AI 生成标识"), text: t("AI images include a visible label and embedded metadata under GB 45438-2025.", "AI 图片按 GB 45438-2025 加显式标识，并在文件中写入隐式标识。") },
 ] as const
 
-const chatProviders = ['OpenAI', 'Claude', 'Gemini', 'DeepSeek', '通义千问', '智谱 GLM', '豆包', 'Kimi', '硅基流动', 'OpenRouter', 'Ollama']
-const imageProviders = ['豆包 Seedream', '通义千问图像', '通义万相', 'Gemini 图像', 'OpenAI gpt-image', 'OpenRouter']
+const chatProviders = ['OpenAI', 'Claude', 'Gemini', 'DeepSeek', t("Qwen", "通义千问"), t("Zhipu GLM", "智谱 GLM"), t("Doubao", "豆包"), 'Kimi', t("SiliconFlow", "硅基流动"), 'OpenRouter', 'Ollama']
+const imageProviders = [t("Doubao Seedream", "豆包 Seedream"), t("Qwen Image", "通义千问图像"), t("Wanxiang", "通义万相"), t("Gemini Image", "Gemini 图像"), 'OpenAI gpt-image', 'OpenRouter']
 
 const faqs = [
   {
-    q: '小衣柜收费吗？',
-    a: '应用免费。AI 识别和生图由你自己配置的服务商按量计费，费用取决于选用的模型；试穿页会提示这次大约调用几次图像模型。',
+    q: t("Is Wardrobe free?", "小衣柜收费吗？"),
+    a: t("The app is free. Your AI provider bills recognition and image generation by usage and model. The try-on screen estimates the number of image generation calls.", "应用免费。AI 识别和生图由你自己配置的服务商按量计费，费用取决于选用的模型；试穿页会提示这次大约调用几次图像模型。"),
   },
   {
-    q: '开始使用需要准备什么？',
-    a: '一台 Android 8.0 及以上的手机，以及一个支持图片输入的对话模型（用于识别衣物）。想用 AI 试穿，再添加一个图像生成服务，例如豆包 Seedream 或通义千问图像。',
+    q: t("What do I need to get started?", "开始使用需要准备什么？"),
+    a: t("Use an Android 8.0 or later phone and a chat model that accepts images for garment recognition. For AI try-on, add an image generation provider such as Doubao Seedream or Qwen Image.", "一台 Android 8.0 及以上的手机，以及一个支持图片输入的对话模型（用于识别衣物）。想用 AI 试穿，再添加一个图像生成服务，例如豆包 Seedream 或通义千问图像。"),
   },
   {
-    q: '我的照片会被上传吗？',
-    a: '小衣柜没有自己的服务器。照片只在你使用 AI 功能时发给你配置的 AI 服务商；开启云同步后，数据同步到你指定的谷歌云盘、WebDAV 或 FTP。',
+    q: t("Are my photos uploaded?", "我的照片会被上传吗？"),
+    a: t("Wardrobe has no app backend. When you use AI, photos go to the provider you configured. If you enable cloud sync, data goes to your chosen Google Drive, WebDAV, or FTP account.", "小衣柜没有自己的服务器。照片只在你使用 AI 功能时发给你配置的 AI 服务商；开启云同步后，数据同步到你指定的谷歌云盘、WebDAV 或 FTP。"),
   },
   {
-    q: 'API Key 安全吗？',
-    a: 'API Key 用 Android Keystore 加密保存在本机，不会被同步或备份。换新手机时，在「AI 服务」里重新填写一次即可。',
+    q: t("Is my API key secure?", "API Key 安全吗？"),
+    a: t("Your API key is encrypted on your phone with Android Keystore and excluded from sync and backups. Re-enter it under AI Services on a new phone.", "API Key 用 Android Keystore 加密保存在本机，不会被同步或备份。换新手机时，在「AI 服务」里重新填写一次即可。"),
   },
   {
-    q: '有 iPhone 版吗？',
-    a: '目前只有 Android 版。',
+    q: t("Is there an iPhone version?", "有 iPhone 版吗？"),
+    a: t("Wardrobe is currently available for Android.", "目前只有 Android 版。"),
   },
 ]
 ---
@@ -78,25 +81,28 @@ const faqs = [
     <div class="wrap hero-grid">
       <div class="hero-copy">
         <span class="eyebrow reveal">Wardrobe, organized by AI</span>
-        <h1 class="reveal" style="--delay: .05s"><span>你的衣柜，</span><span>会整理，也会试穿。</span></h1>
+        <h1 class="reveal" style="--delay: .05s"><span>{t("Your wardrobe,", "你的衣柜，")}</span><span>{t("organized and ready to try on.", "会整理，也会试穿。")}</span></h1>
         <p class="lead reveal" style="--delay: .1s">
-          拍下衣服，AI 自动补全类别、颜色、季节和材质；想穿什么，用一句话就能找到。挑几件搭配、选一位模特，生成正面、侧面、背面三张试穿图。
+          {t("Photograph your clothes to tag categories, colors, seasons, and materials with AI. Find what you want to wear in your own words, then choose an outfit and a model to generate front, side, and back try-on images.", "拍下衣服，AI 自动补全类别、颜色、季节和材质；想穿什么，用一句话就能找到。挑几件搭配、选一位模特，生成正面、侧面、背面三张试穿图。")}
         </p>
         <div class="hero-actions reveal" style="--delay: .15s">
           <a class="btn btn-primary" href={downloadUrl(v)} data-download>
             <Icon name="download" size={20} />
-            下载 Android 版
+            {t("Download APK", "下载 Android 版")}
             <small>v{v} · {formatSize(latest.data.size)}</small>
           </a>
-          <a class="btn btn-ghost" href={`${import.meta.env.BASE_URL}changelog/`}>
-            更新日志
+          <a class="btn btn-ghost" href={`${base}changelog/`}>
+            {t("Changelog", "更新日志")}
             <Icon name="arrow" size={18} />
           </a>
         </div>
         <p class="hero-meta muted reveal" style="--delay: .2s">
-          <span><Icon name="phone" size={16} /> Android 8.0 及以上</span>
-          <span><Icon name="shield" size={16} /> 数据保存在本机</span>
-          <span><Icon name="key" size={16} /> 使用你自己的 AI 服务</span>
+          <span><Icon name="phone" size={16} />
+{t("Android 8.0 or later", "Android 8.0 及以上")}</span>
+          <span><Icon name="shield" size={16} />
+{t("Stored on your device", "数据保存在本机")}</span>
+          <span><Icon name="key" size={16} />
+{t("Bring your own AI provider", "使用你自己的 AI 服务")}</span>
         </p>
       </div>
 
@@ -107,13 +113,14 @@ const faqs = [
         </div>
         <Phone screen={shots.wardrobe} alt="" width={262} eager class="hero-phone reveal" />
         <div class="float-card tags reveal" style="--delay: .35s">
-          <span class="float-title"><Icon name="sparkle" size={15} /> AI 识别完成</span>
+          <span class="float-title"><Icon name="sparkle" size={15} />
+{t("AI tagging complete", "AI 识别完成")}</span>
           <div class="chips">
-            <span class="chip chip-clay">外套</span>
-            <span class="chip">驼色</span>
-            <span class="chip">羊毛</span>
-            <span class="chip">秋冬</span>
-            <span class="chip">通勤</span>
+            <span class="chip chip-clay">{t("Coat", "外套")}</span>
+            <span class="chip">{t("Camel", "驼色")}</span>
+            <span class="chip">{t("Wool", "羊毛")}</span>
+            <span class="chip">{t("Fall and winter", "秋冬")}</span>
+            <span class="chip">{t("Workwear", "通勤")}</span>
           </div>
         </div>
         <div class="float-card views reveal" style="--delay: .45s">
@@ -122,7 +129,7 @@ const faqs = [
               <Picture src={img} alt="" widths={[120]} sizes="60px" formats={['avif', 'webp']} />
             ))
           }
-          <span>三视图</span>
+          <span>{t("Three views", "三视图")}</span>
         </div>
       </div>
     </div>
@@ -133,48 +140,48 @@ const faqs = [
     <div class="wrap">
       <div class="feature">
         <div class="feature-copy reveal">
-          <span class="eyebrow">01 · 整理</span>
-          <h2>拍一张，标签自动补全</h2>
+          <span class="eyebrow">{t("01 · Organize", "01 · 整理")}</span>
+          <h2>{t("Snap a photo and let AI do the tagging", "拍一张，标签自动补全")}</h2>
           <p>
-            拍照或从相册导入，多模态大模型识别类别、颜色、季节、材质和风格，并写好一句描述。批量导入时在后台同时识别，失败的可以一键重试。
+            {t("Take a photo or import one from your gallery. A multimodal model identifies category, color, season, material, and style, then writes a short description. Bulk tagging runs in the background, and failed items can be retried.", "拍照或从相册导入，多模态大模型识别类别、颜色、季节、材质和风格，并写好一句描述。批量导入时在后台同时识别，失败的可以一键重试。")}
           </p>
           <ul class="checks">
-            <li><Icon name="check" size={18} />一件衣服可以同时属于多个类别，类别、风格、存放位置都能自定义</li>
-            <li><Icon name="check" size={18} />记录品牌、尺码、价格、备注，常穿的加上收藏</li>
-            <li><Icon name="check" size={18} />识图、查重、搜索可以分别指定不同的 AI 服务</li>
+            <li><Icon name="check" size={18} />{t("Assign garments to multiple categories and customize categories, styles, and storage locations", "一件衣服可以同时属于多个类别，类别、风格、存放位置都能自定义")}</li>
+            <li><Icon name="check" size={18} />{t("Record brand, size, price, and notes, and mark your go-to pieces as favorites", "记录品牌、尺码、价格、备注，常穿的加上收藏")}</li>
+            <li><Icon name="check" size={18} />{t("Choose separate AI providers for tagging, duplicate checks, and search", "识图、查重、搜索可以分别指定不同的 AI 服务")}</li>
           </ul>
         </div>
         <div class="feature-visual tone-sand reveal" style="--delay: .1s">
-          <Phone screen={shots.detail} alt="衣物详情：驼色双排扣羊毛大衣，带 AI 描述与标签" width={268} />
+          <Phone screen={shots.detail} alt={t("Garment details for a camel double-breasted wool coat with AI description and tags", "衣物详情：驼色双排扣羊毛大衣，带 AI 描述与标签")} width={268} />
           <div class="side-stack">
-            <div class="photo-tile"><Picture src={dress} alt="酒红色碎花吊带连衣裙" widths={[200, 400]} sizes="150px" formats={['avif', 'webp']} /></div>
-            <div class="photo-tile"><Picture src={bag} alt="焦糖色皮质托特包" widths={[200, 400]} sizes="150px" formats={['avif', 'webp']} /></div>
+            <div class="photo-tile"><Picture src={dress} alt={t("Burgundy floral slip dress", "酒红色碎花吊带连衣裙")} widths={[200, 400]} sizes="150px" formats={['avif', 'webp']} /></div>
+            <div class="photo-tile"><Picture src={bag} alt={t("Caramel leather tote", "焦糖色皮质托特包")} widths={[200, 400]} sizes="150px" formats={['avif', 'webp']} /></div>
           </div>
         </div>
       </div>
 
       <div class="feature flip">
         <div class="feature-copy reveal">
-          <span class="eyebrow">02 · 查找</span>
-          <h2>想穿什么，说出来就行</h2>
+          <span class="eyebrow">{t("02 · Find", "02 · 查找")}</span>
+          <h2>{t("Describe what you want to wear", "想穿什么，说出来就行")}</h2>
           <p>
-            输入“秋冬通勤穿的外套”，描述会被理解成季节、场合等标签条件，再结合本地向量索引排序。也可以按类别、风格、存放位置组合筛选，只看收藏。
+            {t("Type “a coat for commuting in fall and winter.” The app turns your description into filters such as season and occasion and ranks the results with a local vector index. You can also filter by category, style, storage location, or favorites.", "输入“秋冬通勤穿的外套”，描述会被理解成季节、场合等标签条件，再结合本地向量索引排序。也可以按类别、风格、存放位置组合筛选，只看收藏。")}
           </p>
           <ul class="checks">
-            <li><Icon name="check" size={18} />本地离线索引，搜索不依赖网络；可选远程 Embedding</li>
-            <li><Icon name="check" size={18} />以图查重：先召回相似候选，再让模型逐一比对是不是同一件</li>
+            <li><Icon name="check" size={18} />{t("Search with an offline index, with optional remote embeddings", "本地离线索引，搜索不依赖网络；可选远程 Embedding")}</li>
+            <li><Icon name="check" size={18} />{t("Find similar garments by photo, then have a model check whether they are duplicates", "以图查重：先召回相似候选，再让模型逐一比对是不是同一件")}</li>
           </ul>
         </div>
         <div class="feature-visual tone-mist reveal" style="--delay: .1s">
-          <Phone screen={shots.search} alt="搜索：用自然语言找到秋冬通勤的外套" width={268} />
+          <Phone screen={shots.search} alt={t("Search for a fall or winter work coat using everyday language", "搜索：用自然语言找到秋冬通勤的外套")} width={268} />
           <div class="query-card">
-            <span class="muted">你说</span>
-            <strong>“秋冬通勤穿的外套”</strong>
-            <span class="muted">理解为</span>
+            <span class="muted">{t("You say", "你说")}</span>
+            <strong>{t("“A coat for commuting in fall and winter”", "“秋冬通勤穿的外套”")}</strong>
+            <span class="muted">{t("Interpreted as", "理解为")}</span>
             <div class="chips">
-              <span class="chip chip-clay">季节：秋冬</span>
-              <span class="chip chip-clay">场合：通勤</span>
-              <span class="chip">类别：外套</span>
+              <span class="chip chip-clay">{t("Season: Fall and winter", "季节：秋冬")}</span>
+              <span class="chip chip-clay">{t("Occasion: Commuting", "场合：通勤")}</span>
+              <span class="chip">{t("Category: Coat", "类别：外套")}</span>
             </div>
           </div>
         </div>
@@ -182,22 +189,22 @@ const faqs = [
 
       <div class="feature tryon">
         <div class="feature-copy reveal">
-          <span class="eyebrow">03 · 试穿</span>
-          <h2>挑几件衣服，看它穿在身上</h2>
+          <span class="eyebrow">{t("03 · Try on", "03 · 试穿")}</span>
+          <h2>{t("See how an outfit looks on a model", "挑几件衣服，看它穿在身上")}</h2>
           <p>
-            选好模特和衣物，正面、侧面、背面三个视角同时生成，每张都以模特同一视角的形象为底图、以头肩特写为长相参考，三张图里的人和衣物保持一致。生成在后台排队进行，离开页面也不会中断。
+            {t("Choose a model and garments to generate front, side, and back views at once. Each image uses the matching model view and a head-and-shoulders reference to keep the person and garments consistent. Generation continues in the background when you leave the page.", "选好模特和衣物，正面、侧面、背面三个视角同时生成，每张都以模特同一视角的形象为底图、以头肩特写为长相参考，三张图里的人和衣物保持一致。生成在后台排队进行，离开页面也不会中断。")}
           </p>
         </div>
         <div class="flow reveal" style="--delay: .1s">
           <div class="flow-inputs">
             <div class="flow-group">
-              <span class="flow-label">衣物</span>
+              <span class="flow-label">{t("Garments", "衣物")}</span>
               <div class="flow-garments">
                 {
                   [
-                    { src: coat, alt: '驼色大衣' },
-                    { src: dress, alt: '酒红长裙' },
-                    { src: bag, alt: '焦糖色托特包' },
+                    { src: coat, alt: t("Camel coat", "驼色大衣") },
+                    { src: dress, alt: t("Long burgundy dress", "酒红长裙") },
+                    { src: bag, alt: t("Caramel tote", "焦糖色托特包") },
                   ].map((g) => (
                     <div class="photo-tile small">
                       <Picture src={g.src} alt={g.alt} widths={[180, 360]} sizes="110px" formats={['avif', 'webp']} />
@@ -208,9 +215,9 @@ const faqs = [
             </div>
             <span class="flow-plus" aria-hidden="true">+</span>
             <div class="flow-group">
-              <span class="flow-label">模特</span>
+              <span class="flow-label">{t("Model", "模特")}</span>
               <div class="photo-tile model">
-                <Picture src={model} alt="模特形象" widths={[180, 360]} sizes="140px" formats={['avif', 'webp']} />
+                <Picture src={model} alt={t("Model reference", "模特形象")} widths={[180, 360]} sizes="140px" formats={['avif', 'webp']} />
                 <AiMark />
               </div>
             </div>
@@ -219,13 +226,13 @@ const faqs = [
           <div class="flow-views">
             {
               [
-                { src: front, label: '正面' },
-                { src: side, label: '侧面' },
-                { src: back, label: '背面' },
+                { src: front, label: t("Front", "正面") },
+                { src: side, label: t("Side", "侧面") },
+                { src: back, label: t("Back", "背面") },
               ].map((view) => (
                 <figure>
                   <div class="photo-tile view">
-                    <Picture src={view.src} alt={`试穿效果：${view.label}`} widths={[260, 520]} sizes="(max-width: 760px) 30vw, 200px" formats={['avif', 'webp']} />
+                    <Picture src={view.src} alt={t(`Try-on: ${view.label}`, `试穿效果：${view.label}`)} widths={[260, 520]} sizes="(max-width: 760px) 30vw, 200px" formats={['avif', 'webp']} />
                     <AiMark />
                   </div>
                   <figcaption>{view.label}</figcaption>
@@ -256,36 +263,36 @@ const faqs = [
     <div class="wrap">
       <div class="section-head reveal">
         <span class="eyebrow">Your data, your device</span>
-        <h2>衣柜是你的，数据也是</h2>
-        <p>小衣柜没有自己的服务器。衣物、照片和试穿记录保存在手机里，想在多台设备上用，就同步到你自己的网盘。</p>
+        <h2>{t("Your wardrobe, your data", "衣柜是你的，数据也是")}</h2>
+        <p>{t("Wardrobe has no app backend. Clothes, photos, and try-on history stay on your phone. To use multiple devices, sync to your own cloud storage.", "小衣柜没有自己的服务器。衣物、照片和试穿记录保存在手机里，想在多台设备上用，就同步到你自己的网盘。")}</p>
       </div>
       <div class="trust-grid">
         <div class="trust card reveal">
           <Icon name="phone" size={26} />
-          <h3>本地优先</h3>
-          <p>所有数据默认只在本机。卸载应用即删除全部本地数据；也可以随时导出 zip 备份。</p>
+          <h3>{t("Local first", "本地优先")}</h3>
+          <p>{t("All data stays on your device by default. Uninstalling removes the local data. You can export a ZIP backup at any time.", "所有数据默认只在本机。卸载应用即删除全部本地数据；也可以随时导出 zip 备份。")}</p>
         </div>
         <div class="trust card reveal" style="--delay: .05s">
           <Icon name="key" size={26} />
-          <h3>自带 AI 服务</h3>
-          <p>填写你自己的 API Key，加密保存在本机，不会被同步或备份。只有使用 AI 功能时，照片才会发给你选的服务商。</p>
+          <h3>{t("Bring your own AI", "自带 AI 服务")}</h3>
+          <p>{t("Enter your own API key. It is encrypted on your phone and excluded from sync and backups. Photos go to your chosen provider only when you use AI.", "填写你自己的 API Key，加密保存在本机，不会被同步或备份。只有使用 AI 功能时，照片才会发给你选的服务商。")}</p>
         </div>
         <div class="trust card reveal" style="--delay: .1s">
           <Icon name="sync" size={26} />
-          <h3>多端同步</h3>
-          <p>谷歌云盘、WebDAV（坚果云、Nextcloud、群晖）、FTP/FTPS。改动后自动在后台同步，换手机登录同一账号即可。</p>
+          <h3>{t("Sync across devices", "多端同步")}</h3>
+          <p>{t("Use Google Drive, WebDAV (Nutstore, Nextcloud, or Synology), or FTP/FTPS. Changes sync in the background. Sign in to the same account on a new phone.", "谷歌云盘、WebDAV（坚果云、Nextcloud、群晖）、FTP/FTPS。改动后自动在后台同步，换手机登录同一账号即可。")}</p>
         </div>
       </div>
       <div class="providers reveal">
         <div>
-          <span class="providers-label">识图与搜索</span>
+          <span class="providers-label">{t("Tagging and search", "识图与搜索")}</span>
           <div class="chips">{chatProviders.map((p) => <span class="chip">{p}</span>)}</div>
         </div>
         <div>
-          <span class="providers-label">图像生成</span>
+          <span class="providers-label">{t("Image generation", "图像生成")}</span>
           <div class="chips">{imageProviders.map((p) => <span class="chip">{p}</span>)}</div>
         </div>
-        <p class="muted small">兼容 OpenAI Chat Completions、Responses 与 Anthropic Messages 接口，可自定义地址、模型与请求参数；提示词模板可以逐个修改。</p>
+        <p class="muted small">{t("Works with OpenAI Chat Completions, Responses, and Anthropic Messages. Customize endpoints, models, request parameters, and individual prompt templates.", "兼容 OpenAI Chat Completions、Responses 与 Anthropic Messages 接口，可自定义地址、模型与请求参数；提示词模板可以逐个修改。")}</p>
       </div>
     </div>
   </section>
@@ -296,16 +303,16 @@ const faqs = [
       <div class="wrap">
         <div class="section-head reveal">
           <span class="eyebrow">Designed to stay out of the way</span>
-          <h2>界面克制，让衣服成为主角</h2>
-          <p>浅灰画布上的白色圆角卡片，陶土色只用在选中、收藏和主要按钮上。支持深色模式，也能跟随系统壁纸取色。</p>
+          <h2>{t("A simple interface that puts your clothes first", "界面克制，让衣服成为主角")}</h2>
+          <p>{t("Rounded white cards sit on a light gray canvas, with clay accents for selections, favorites, and primary actions. Dark mode and system wallpaper colors are supported.", "浅灰画布上的白色圆角卡片，陶土色只用在选中、收藏和主要按钮上。支持深色模式，也能跟随系统壁纸取色。")}</p>
         </div>
       </div>
-      <div class="gallery" aria-label="应用界面截图">
+      <div class="gallery" aria-label={t("App screenshots", "应用界面截图")}>
         <div class="gallery-track">
           {
             screens.map((s) => (
               <figure class="shot">
-                <Phone screen={s.screen} alt={s.text ? `${s.title}：${s.text}` : s.title} width={250} fluid />
+                <Phone screen={s.screen} alt={s.text ? `${s.title}${t(': ', '：')}${s.text}` : s.title} width={250} fluid />
                 <figcaption>
                   <strong>{s.title}</strong>
                   {s.text && <span>{s.text}</span>}
@@ -326,9 +333,9 @@ const faqs = [
     <div class="wrap updates-grid">
       <div class="section-head reveal">
         <span class="eyebrow">Release notes</span>
-        <h2>持续更新</h2>
-        <a class="btn btn-ghost" href={`${import.meta.env.BASE_URL}changelog/`}>
-          全部更新日志
+        <h2>{t("Latest updates", "持续更新")}</h2>
+        <a class="btn btn-ghost" href={`${base}changelog/`}>
+          {t("Full changelog", "全部更新日志")}
           <Icon name="arrow" size={18} />
         </a>
       </div>
@@ -336,15 +343,15 @@ const faqs = [
         {
           all.slice(0, 4).map((r, i) => (
             <li class="reveal" style={`--delay: ${i * 0.06}s`}>
-              <a href={`${import.meta.env.BASE_URL}changelog/#v${r.data.version}`}>
+              <a href={`${base}changelog/#v${r.data.version}`}>
                 <div class="tl-head">
                   <strong>v{r.data.version}</strong>
-                  {i === 0 && <span class="chip chip-clay">最新</span>}
+                  {i === 0 && <span class="chip chip-clay">{t("Latest", "最新")}</span>}
                   <time datetime={r.data.date.toISOString()} class="muted">
-                    {formatDate(r.data.date)}
+                    {formatDate(r.data.date, locale)}
                   </time>
                 </div>
-                <p>{r.data.summary}</p>
+                <p>{releaseSummary(r, language)}</p>
               </a>
             </li>
           ))
@@ -358,7 +365,7 @@ const faqs = [
     <div class="wrap faq-grid">
       <div class="section-head reveal">
         <span class="eyebrow">FAQ</span>
-        <h2>常见问题</h2>
+        <h2>{t("Frequently asked questions", "常见问题")}</h2>
       </div>
       <div class="faq-list">
         {
@@ -381,15 +388,15 @@ const faqs = [
         <AiMark dark />
       </div>
       <div class="cta-copy">
-        <h2>把整个衣柜，装进手机。</h2>
-        <p>免费下载，使用你自己的 AI 服务。</p>
+        <h2>{t("Take your wardrobe with you.", "把整个衣柜，装进手机。")}</h2>
+        <p>{t("Download for free and use your own AI provider.", "免费下载，使用你自己的 AI 服务。")}</p>
         <div class="hero-actions">
           <a class="btn btn-primary" href={downloadUrl(v)} data-download>
             <Icon name="download" size={20} />
-            下载 v{v}
+            {t('Download', t("Download", "下载"))} v{v}
             <small>{formatSize(latest.data.size)}</small>
           </a>
-          <a class="btn btn-ghost on-dark" href={`${import.meta.env.BASE_URL}download/`}>安装说明</a>
+          <a class="btn btn-ghost on-dark" href={`${base}download/`}>{t("Installation instructions", "安装说明")}</a>
         </div>
       </div>
     </div>
@@ -479,6 +486,10 @@ const faqs = [
   .hero h1 span {
     display: block;
     white-space: nowrap;
+  }
+
+  :global(html[lang="en"]) .hero h1 span {
+    white-space: normal;
   }
 
   .lead {

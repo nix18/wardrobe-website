@@ -9,7 +9,7 @@ walk(root)
 const errors=[]
 for (const file of html) {
   const text=readFileSync(file,'utf8')
-  if (!text.includes('<title>') || !text.includes('lang="zh-CN"')) errors.push(`${file}: missing title/lang`)
+  if (!text.includes('<title>') || !text.includes(`<html lang="${file.startsWith(join(root, 'zh') + '/') ? 'zh-CN' : 'en'}"`)) errors.push(`${file}: missing title/lang`)
   for (const match of text.matchAll(/(?:href|src)="([^"#]+)(?:#[^"]*)?"/g)) {
     const url=match[1].split('?')[0]
     if (!url.startsWith('/wardrobe-website/')) continue

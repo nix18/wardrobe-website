@@ -1,0 +1,25 @@
+---
+import { render } from 'astro:content'
+import { localizedBase, pageLanguage } from '../lib/language'
+import { type Release } from '../lib/releases'
+
+interface Props {
+  release: Release
+}
+
+const { release } = Astro.props
+const { Content } = await render(release)
+const language = pageLanguage(Astro.url.pathname)
+const translations = import.meta.glob('../data/releases/en/*.md', { eager: true, import: 'Content' })
+const EnglishNotes = translations[`../data/releases/en/v${release.data.version}.md`]
+const chineseUrl = `${localizedBase('zh')}changelog/#v${release.data.version}`
+---
+
+{
+  language === 'zh' ? <Content /> : (
+    <>
+      {EnglishNotes && <EnglishNotes />}
+      <a href={chineseUrl} hreflang="zh-CN">Read the original release notes in Chinese</a>
+    </>
+  )
+}

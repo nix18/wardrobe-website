@@ -23,6 +23,10 @@ async function fitsViewport(page: Page) {
   expect(result.scroll, JSON.stringify(result)).toBeLessThanOrEqual(result.client + 1)
 }
 
+test.beforeEach(async ({ page }) => {
+  await page.route('https://ipapi.co/country/', route => route.fulfill({ body: 'US' }))
+})
+
 test.describe('mobile pages', () => {
   test.use({ isMobile: true, hasTouch: true, deviceScaleFactor: 1 })
   for (const width of [320, 360, 390, 414, 430]) {
@@ -44,6 +48,15 @@ test.describe('mobile pages', () => {
         }
       })
     }
+  }
+
+  for (const path of ['zh/', 'zh/download/', 'zh/download/history/', 'zh/changelog/', 'zh/privacy/']) {
+    test(`320px ${path} fits the viewport`, async ({ page }) => {
+      await page.setViewportSize({ width: 320, height: 844 })
+      await page.goto(path)
+      await settle(page)
+      await fitsViewport(page)
+    })
   }
 
   for (const width of [320, 390]) {

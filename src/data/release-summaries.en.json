@@ -1,0 +1,19 @@
+{
+  "1.0.0": "First stable release: manage garments, tag photos with AI, search and find duplicates, generate three try-on views, and sync across devices.",
+  "1.0.1": "The AI-generated badge is now a glass capsule in the bottom right of the image, visible against any background.",
+  "1.0.2": "Generated models and try-on images now use soft, even lighting for more natural faces.",
+  "1.0.3": "Fixed diagonal grid shadows on faces in AI-generated model and try-on images.",
+  "1.0.4": "Cleaned up grid patterns and grain before reusing AI images as references, reducing artifacts from repeated edits.",
+  "1.0.5": "Added face refinement and shortened the reference pipeline. Connection errors are now reported as such.",
+  "1.0.6": "Evened out skin tones and removed yellow-gray patches and dark areas around the chin.",
+  "1.0.7": "Restored wardrobe and recent-item photos after backup import, with missing thumbnails regenerated automatically.",
+  "1.0.8": "Try-on results retain the model’s facial identity across outfit changes, with fewer patches, shadows, and distortions.",
+  "1.0.9": "Restored pose creation from photos and face processing. Image generation now continues in the background.",
+  "1.0.10": "Fixed APK installation on OPPO, realme, and OnePlus phones that require a legacy signature.",
+  "1.0.11": "Fixed face and neck seams in side-view try-ons with poses and made opening try-on history from Profile more reliable.",
+  "1.0.12": "Generate four views of a model together. Added makeup, retouching, and expression options with a soft portrait style by default.",
+  "1.0.13": "Photo poses retain the original bent knees, gestures, and perspective across all three try-on views.",
+  "1.0.14": "Choose a built-in studio or extract a background from a photo. Generate outfit, pose, and background together across three views.",
+  "1.0.15": "Identify layered garments individually, review their crops and order, and preserve left/right placement and garment construction in back views.",
+  "1.0.15-r1": "Unified item categories and search, show each selected garment in try-on history, and improved headband search and accessory consistency across views."
+}

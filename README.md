@@ -2,76 +2,79 @@
   <img src="docs/readme/icon.png" width="76" alt="">
 </p>
 
-<h1 align="center">小衣柜 · 网站</h1>
+<h1 align="center">Wardrobe · Website</h1>
 
 <p align="center">
-  <a href="https://nix18.github.io/wardrobe-website/">nix18.github.io/wardrobe-website</a>
+  English · <a href="README.zh-CN.md">简体中文</a>
 </p>
 
 <p align="center">
-  <a href="https://github.com/nix18/wardrobe-website/releases/latest"><img src="https://img.shields.io/github/v/release/nix18/wardrobe-website?label=%E6%9C%80%E6%96%B0%E7%89%88&color=B85A35" alt="最新版"></a>
+  <a href="https://nix18.github.io/wardrobe-website/?lang=en">nix18.github.io/wardrobe-website</a>
+</p>
+
+<p align="center">
+  <a href="https://github.com/nix18/wardrobe-website/releases/latest"><img src="https://img.shields.io/github/v/release/nix18/wardrobe-website?label=Latest%20release&color=B85A35" alt="Latest release"></a>
   <img src="https://img.shields.io/badge/Android-8.0%2B-3DDC84?logo=android&logoColor=white" alt="Android 8.0+">
   <img src="https://img.shields.io/badge/Astro-7-FF5D01?logo=astro&logoColor=white" alt="Astro 7">
 </p>
 
-![网站首页，右下是手机上的下载页](docs/readme/site.png)
+![Website homepage and mobile download page](docs/readme/site.png)
 
-小衣柜是一个 Android 衣橱应用：拍照收衣服，AI 补标签，一句话找出来，挑几件生成正面、侧面、背面的试穿图。这里是它的网站，安装包也发在这个仓库的 [Releases](https://github.com/nix18/wardrobe-website/releases)。
+Wardrobe is an Android app for organizing clothes, tagging photos with AI, searching in your own words, and generating front, side, and back try-on views. This repository hosts its website and [public APK releases](https://github.com/nix18/wardrobe-website/releases).
 
-![应用的五个主要界面](docs/readme/banner.png)
+![Five main screens in the app](docs/readme/banner.png)
 
-## 页面
+## Pages and languages
 
-| 路径 | 内容 |
+| English path | Page |
 | --- | --- |
-| `/` | 功能、试穿流程、界面截图、最近更新、常见问题 |
-| `/download/` | 最新版、安装步骤、SHA-256 |
-| `/download/history/` | 历史版本 |
-| `/changelog/` | 最近 3 个版本，再往前的收在“更多版本”里 |
-| `/privacy/` | 隐私政策，和应用里的一致 |
+| `/` | Features, try-on workflow, screenshots, recent updates, and FAQ |
+| `/download/` | Latest APK, installation steps, and SHA-256 |
+| `/download/history/` | Previous releases |
+| `/changelog/` | Changelog with the latest three releases expanded |
+| `/privacy/` | App privacy policy and the website’s language lookup disclosure |
 
-首页的界面截图跟着滚轮走：往下滚时横向滑动，滑到最后一张再继续往下。深色模式跟随系统。没有客户端 UI 框架；共享样式在 `src/styles/global.css`，页面局部样式跟随各 Astro 页面。禁用脚本时正文仍可见。
+Prefix a path with `/zh` to open its Simplified Chinese counterpart. The site uses ipapi.co to infer country or region from the visitor’s IP address. Visitors from mainland China, Hong Kong, Macao, and Taiwan see Simplified Chinese by default. Other regions and failed lookups fall back to English. The header language switch saves the visitor’s choice in their browser. The pages are pre-rendered and work without JavaScript through their direct links.
 
-## 本地跑
+Shared styles are in `src/styles/global.css`. The site follows the visitor’s color scheme and honors reduced-motion settings for the screenshot gallery.
 
-Node.js 22.19 以上。
+## Local development
+
+Use Node.js 22.19 or later.
 
 ```bash
 npm ci
-npm run dev       # http://localhost:4321/wardrobe-website/
-npm run check     # 发布工具单元测试
-npm run build     # 构建并检查本地链接与图片
-npx playwright install chromium --only-shell # 首次安装浏览器
-npm run test:layout # 320–430px 手机及桌面真实浏览器布局回归
-npm run deploy    # 仅手动重试远端部署；日常 push main 自动构建并发布到 gh-pages
+npm run dev
+npm run check
+npm run build
+npx playwright install chromium --only-shell
+npm run test:layout
 ```
 
-## 发新版
+`npm run build` checks the generated pages and their local links and assets. The Playwright suite covers mobile and desktop layout plus language selection.
 
-应用打好正式包之后：
+## Releases and deployment
+
+After building the Android release APK:
 
 ```bash
-npm run release -- 1.0.14 --source-repo nix18/clothes-app-workspace --summary "一句话更新摘要"
-git add src/content/releases && git commit -m "发布 v1.0.14" && git push
+npm run release -- 1.0.14 --source-repo nix18/clothes-app-workspace --summary "Short release summary"
+git add src/content/releases && git commit -m "Release v1.0.14" && git push
 ```
 
-`release` 从应用 Release 下载 APK 并核对来源 SHA-256，先上传公开草稿并核对资源大小与哈希，再发布、写入 `src/content/releases/v1.0.14.md`。同版本换包须显式 `--replace`，新版本不覆盖旧资源。更新说明里的“## 下载”一节会被去掉，其他可用 `--drop 标题`。
+The release tool downloads the APK from the app repository, verifies the original SHA-256, uploads and verifies a public draft, publishes it, and writes the release metadata to `src/content/releases/`. Replacing an existing APK requires `--replace`. Revisions such as `1.0.15-r1` have their own tags and APKs. The updater omits the Downloads section from release notes and accepts additional headings via `--drop`.
 
-站点 `main` 只保存源码。推送后，`.github/workflows/pages.yml` 完成工具测试、构建和浏览器布局检查，把同一份验证后的产物增量提交到 `gh-pages`，再请求 Pages 发布；不在本地重复构建，不强推分支。PR 只检查和构建。
+Add an English summary for each new version in `src/data/release-summaries.en.json`. Place the English notes in `src/data/releases/en/v<version>.md`. The English changelog also links to the original Chinese notes.
 
-Pages 来源保持 **Deploy from a branch → gh-pages → /**，`github-pages` 环境允许 `gh-pages`。工作流使用内置 `GITHUB_TOKEN`，不保存个人令牌；由于该令牌的推送不会自动触发 Pages，工作流显式请求构建。
+The Pages workflow tests and builds the site, updates `gh-pages` with the verified output, and requests a publication. Set the Pages source to **Deploy from a branch → gh-pages → /** and allow `gh-pages` in the `github-pages` environment. Use `npm run deploy` only to retry a remote deployment manually. After publishing, verify the public APK’s SHA-256, version, download page, and release notes.
 
-发布完核对公开 APK 的 SHA-256、在线下载页、更新日志和实际版本；CI 绿色只表示构建结束，不能代替在线验证。
+## Images
 
-## 图片
+| Path | Source and regeneration |
+| --- | --- |
+| `src/assets/screens/` | Run `./gradlew :app:testDebugUnitTest -Pscreenshots` in the app repository |
+| `src/assets/photos/` | Run `npm run gen-images` with `IMAGE_API_BASE` and `IMAGE_API_KEY`. Prompts are in `art/photo-prompts.mjs`. |
+| `public/og.png`, `public/icon-180.png` | Run `npm run og-image` |
+| `docs/readme/` | Run `npm run readme-images`. The website preview also needs two screenshots. |
 
-| 目录 | 怎么来的 | 怎么重新生成 |
-| --- | --- | --- |
-| `src/assets/screens/` | 应用的截图测试 | 在应用仓库跑 `./gradlew :app:testDebugUnitTest -Pscreenshots` |
-| `src/assets/photos/` | 图像模型，提示词在 `art/photo-prompts.mjs` | `npm run gen-images`，要设 `IMAGE_API_BASE`、`IMAGE_API_KEY` |
-| `public/og.png`、`public/icon-180.png` | 分享预览图、触屏图标 | `npm run og-image` |
-| `docs/readme/` | 这份 README 的配图 | `npm run readme-images`，网站预览图要另外传两张截图 |
-
-示例照片也是应用截图测试里的样图。网站上的模特、衣物和试穿图都是 AI 生成的，页脚写明了。
-
-修订发布支持 `1.0.15-r1`：按修订数字排序，旧标签与旧APK保留。应用显示版本可为1.0.15，网站和文件名明确区分修订。
+The model, garment, and try-on photos on the site are AI-generated examples.

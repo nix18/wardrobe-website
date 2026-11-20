@@ -1,7 +1,10 @@
 ---
+import { translations } from "../lib/language"
 import Base from '../layouts/Base.astro'
 import ReleaseEntry from '../components/ReleaseEntry.astro'
 import { releases } from '../lib/releases'
+
+const { t, language } = translations(Astro.url.pathname)
 
 /** 默认展开最新的几个版本，其余收在“更多版本”里 */
 const SHOWN = 3
@@ -10,11 +13,11 @@ const recent = all.slice(0, SHOWN)
 const older = all.slice(SHOWN)
 ---
 
-<Base title="更新日志" page="changelog" description="小衣柜每个版本的更新说明。">
+<Base title={t("Changelog", "更新日志")} page="changelog" description={t("Release notes for every version of Wardrobe.", "小衣柜每个版本的更新说明。")}>
   <section class="head">
     <div class="wrap">
       <span class="eyebrow">Release notes</span>
-      <h1>更新日志</h1>
+      <h1>{t("Changelog", "更新日志")}</h1>
     </div>
   </section>
 
@@ -25,9 +28,9 @@ const older = all.slice(SHOWN)
         older.length > 0 && (
           <details class="more">
             <summary>
-              <span>更多版本</span>
+              <span>{t("More versions", "更多版本")}</span>
               <span class="muted">
-                v{older[older.length - 1].data.version} – v{older[0].data.version} · 共 {older.length} 个
+                v{older[older.length - 1].data.version} – v{older[0].data.version} · {t(`${older.length} versions`, `共 ${older.length} 个`)}
               </span>
             </summary>
             {older.map((r) => (
