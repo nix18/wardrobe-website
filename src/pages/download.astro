@@ -1,46 +1,48 @@
 ---
-import { render } from 'astro:content'
+import { translations } from "../lib/translate"
+import ReleaseNotes from '../components/ReleaseNotes.astro'
 import Base from '../layouts/Base.astro'
 import Logo from '../components/Logo.astro'
 import Icon from '../components/Icon.astro'
-import { latest as latestRelease, downloadUrl, releaseUrl, formatSize, formatDate, apkName } from '../lib/releases'
+import { latest as latestRelease, downloadUrl, releaseUrl, formatSize, formatDate, apkName, releaseSummary } from '../lib/releases'
+
+const { t, base, locale, language } = translations(Astro.url.pathname)
 
 const latest = await latestRelease()
 const v = latest.data.version
-const { Content } = await render(latest)
 ---
 
-<Base title="下载" page="download" description={`下载小衣柜 v${v}（Android 8.0 及以上，${formatSize(latest.data.size)}）。安装步骤与校验方法。`}>
+<Base title={t("Download", "下载")} page="download" description={t("Download Wardrobe v{version} for Android 8.0 or later ({size}). Includes installation and verification instructions.", "下载小衣柜 v{version}（Android 8.0 及以上，{size}）。安装步骤与校验方法。", { version: v, size: formatSize(latest.data.size) })}>
   <section class="dl-hero">
     <div class="wrap">
-      <span class="eyebrow">Download</span>
-      <h1>下载小衣柜</h1>
-      <p class="muted">适用于 Android 8.0 及以上的手机与平板。免费，使用你自己的 AI 服务。</p>
+      <span class="eyebrow">{t("Download", "下载")}</span>
+      <h1>{t("Download Wardrobe", "下载小衣柜")}</h1>
+      <p class="muted">{t("For phones and tablets running Android 8.0 or later. Free to download, with your own AI provider.", "适用于 Android 8.0 及以上的手机与平板。免费，使用你自己的 AI 服务。")}</p>
 
       <div class="latest card">
         <div class="latest-main">
           <Logo size={64} />
           <div class="latest-info">
             <div class="latest-title">
-              <h2>小衣柜 v{v}</h2>
-              <span class="chip chip-clay">最新版本</span>
+              <h2>{t("Wardrobe", "小衣柜")} v{v}</h2>
+              <span class="chip chip-clay">{t("Latest version", "最新版本")}</span>
             </div>
             <p class="muted">
-              <time datetime={latest.data.date.toISOString()}>{formatDate(latest.data.date)}</time> 发布 · {formatSize(latest.data.size)} · Android 8.0+
+              <time datetime={latest.data.date.toISOString()}>{formatDate(latest.data.date, locale)}</time> {t("", "发布")} · {formatSize(latest.data.size)} · Android 8.0+
             </p>
-            <p>{latest.data.summary}</p>
+            <p>{releaseSummary(latest, language)}</p>
           </div>
           <a class="btn btn-primary dl-btn" href={downloadUrl(v)} data-download>
             <Icon name="download" size={20} />
-            下载 APK
+            {t("Download APK", "下载 APK")}
           </a>
         </div>
         <div class="hash">
           <span class="muted">SHA-256</span>
           <code id="sha">{latest.data.sha256}</code>
-          <button type="button" class="copy" data-copy="#sha" aria-label="复制 SHA-256">
+          <button type="button" class="copy" data-copy="#sha" data-copy-label={t("Copy", "复制")} data-copied-label={t("Copied", "已复制")} aria-label={t("Copy SHA-256", "复制 SHA-256")}>
             <Icon name="copy" size={16} />
-            <span>复制</span>
+            <span>{t("Copy", "复制")}</span>
           </button>
         </div>
       </div>
@@ -50,30 +52,32 @@ const { Content } = await render(latest)
   <section class="section-sm">
     <div class="wrap two-col">
       <div>
-        <h2 class="h-sm">安装步骤</h2>
+        <h2 class="h-sm">{t("Installation", "安装步骤")}</h2>
         <ol class="steps">
           <li>
-            <strong>下载安装包</strong>
-            <p>在手机浏览器中点击上方的“下载 APK”，文件名为 <code>{apkName(v)}</code>。</p>
+            <strong>{t("Download the APK", "下载安装包")}</strong>
+            <p>{t("Tap Download APK above in your phone’s browser. The file is named", "在手机浏览器中点击上方的“下载 APK”，文件名为")} <code>{apkName(v)}</code>{t(".", "。")}</p>
           </li>
           <li>
-            <strong>允许安装</strong>
-            <p>打开下载的文件，系统提示时允许浏览器或文件管理器“安装未知应用”，再点“安装”。</p>
+            <strong>{t("Allow installation", "允许安装")}</strong>
+            <p>{t("Open the downloaded file. If prompted, allow your browser or file manager to install unknown apps, then tap Install.", "打开下载的文件，系统提示时允许浏览器或文件管理器“安装未知应用”，再点“安装”。")}</p>
           </li>
           <li>
-            <strong>配置 AI 服务</strong>
-            <p>首次打开同意隐私政策后，在「设置 › AI 服务」选择服务商、填写 API Key，点“测试连接”。想用 AI 试穿，再添加一个图像生成服务。</p>
+            <strong>{t("Set up an AI provider", "配置 AI 服务")}</strong>
+            <p>{t("Accept the privacy policy on first launch. Under Settings › AI Services, select a provider, enter your API key, and test the connection. For AI try-on, add an image generation provider as well.", "首次打开同意隐私政策后，在「设置 › AI 服务」选择服务商、填写 API Key，点“测试连接”。想用 AI 试穿，再添加一个图像生成服务。")}</p>
           </li>
         </ol>
       </div>
       <div>
-        <h2 class="h-sm">校验安装包</h2>
-        <p class="muted">下载后可以核对 SHA-256，确认文件完整、没有被篡改：</p>
+        <h2 class="h-sm">{t("Verify the APK", "校验安装包")}</h2>
+        <p class="muted">{t("Compare the downloaded file’s SHA-256 with the value above to verify its integrity.", "下载后可以核对 SHA-256，确认文件完整、没有被篡改：")}</p>
         <pre><code><span class="muted"># Windows</span>
 certutil -hashfile {apkName(v)} SHA256
 <span class="muted"># macOS / Linux</span>
 shasum -a 256 {apkName(v)}</code></pre>
-        <a class="link" href={`${import.meta.env.BASE_URL}download/history/`}>需要旧版本？查看历史版本 <Icon name="arrow" size={16} /></a>
+        <a class="link" href={`${base}download/history/`}>{t("Looking for an older release? View previous versions", "需要旧版本？查看历史版本")}
+          <Icon name="arrow" size={16} />
+        </a>
       </div>
     </div>
   </section>
@@ -81,11 +85,11 @@ shasum -a 256 {apkName(v)}</code></pre>
   <section class="section-sm">
     <div class="wrap two-col">
       <div>
-        <h2 class="h-sm">v{v} 更新内容</h2>
-        <a class="link" href={releaseUrl(v)}>在 GitHub 上查看 <Icon name="arrow" size={16} /></a>
+        <h2 class="h-sm">{t("What’s new in v{version}", "v{version} 更新内容", { version: v })}</h2>
+        <a class="link" href={releaseUrl(v)}>{t("View on GitHub", "在 GitHub 上查看")} <Icon name="arrow" size={16} /></a>
       </div>
       <article class="prose card notes">
-        <Content />
+        <ReleaseNotes release={latest} />
       </article>
     </div>
   </section>
@@ -99,8 +103,8 @@ shasum -a 256 {apkName(v)}</code></pre>
       try {
         await navigator.clipboard.writeText(text)
         const label = button.querySelector('span')!
-        label.textContent = '已复制'
-        setTimeout(() => (label.textContent = '复制'), 1600)
+        label.textContent = button.dataset.copiedLabel ?? ''
+        setTimeout(() => (label.textContent = button.dataset.copyLabel ?? ''), 1600)
       } catch {
         // 不支持剪贴板时选中文字，便于手动复制
         const range = document.createRange()
@@ -257,6 +261,7 @@ shasum -a 256 {apkName(v)}</code></pre>
 
   .steps p {
     color: var(--ink-2);
+    overflow-wrap: anywhere;
   }
 
   .steps code {

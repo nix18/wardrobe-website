@@ -1,4 +1,7 @@
 ---
+import { translations } from "../lib/translate"
+
+const { t, language } = translations(Astro.url.pathname)
 /** 「AI生成」标识：与应用中贴在 AI 图片右下角的玻璃胶囊同一版式 */
 interface Props {
   dark?: boolean
@@ -6,7 +9,7 @@ interface Props {
 const { dark = false } = Astro.props
 ---
 
-<span class:list={['ai-mark', { dark }]}>AI生成</span>
+<span class:list={['ai-mark', { dark }]}>{t("AI-generated", "AI生成")}</span>
 
 <style>
   .ai-mark {

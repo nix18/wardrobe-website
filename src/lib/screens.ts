@@ -1,6 +1,7 @@
 // 应用界面截图（应用仓库的 Robolectric 截图测试生成，见 README）及各自状态栏的底色（取截图顶部的颜色，与应用顶栏衔接）
 import type { ImageMetadata } from 'astro'
 import wardrobe from '../assets/screens/wardrobe-light.png'
+import wardrobeEnglish from '../assets/screens/wardrobe-light-en.png'
 import detail from '../assets/screens/garment-detail.png'
 import search from '../assets/screens/search.png'
 import tryOn from '../assets/screens/try-on.png'
@@ -25,6 +26,7 @@ const scrim = '#A7A5A4'
 
 export const screens = {
   wardrobe: { src: wardrobe, bar: paper },
+  wardrobeEnglish: { src: wardrobeEnglish, bar: paper },
   detail: { src: detail, bar: paper },
   search: { src: search, bar: '#FFFFFF' },
   tryOn: { src: tryOn, bar: '#FFFFFF' },

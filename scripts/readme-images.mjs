@@ -4,7 +4,8 @@
 //   tryon.png   试穿流程：衣物 + 模特 → 正面、侧面、背面
 //   more.png    更多界面（带标题）
 //   site.png    网站预览（传入两张网站截图时生成）
-// 界面截图与示例照片取自 src/assets；文字用系统字体渲染，需要中文字体。
+// 界面截图默认取自 src/assets/screens。也可用 README_SCREEN_DIR 指定截图目录。
+// README_LANGUAGE=en 生成英文标题。简体中文标题需要系统安装中文字体。
 import { mkdirSync, readFileSync } from 'node:fs'
 import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
@@ -12,6 +13,8 @@ import sharp from 'sharp'
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..')
 const [out, desktopShot, mobileShot] = process.argv.slice(2)
+const screenDir = process.env.README_SCREEN_DIR || join(root, 'src/assets/screens')
+const english = process.env.README_LANGUAGE === 'en'
 if (!out) throw new Error('用法：node scripts/readme-images.mjs <输出目录> [网站桌面截图 网站手机截图]')
 mkdirSync(out, { recursive: true })
 
@@ -67,7 +70,7 @@ async function phone(key, W) {
   const [file, bar, dark] = SCREENS[key]
   const pad = Math.round(W * 0.034)
   const sw = W - 2 * pad
-  const shot = await sharp(join(root, 'src/assets/screens', `${file}.png`)).resize({ width: sw }).png().toBuffer({ resolveWithObject: true })
+  const shot = await sharp(join(screenDir, `${file}.png`)).resize({ width: sw }).png().toBuffer({ resolveWithObject: true })
   const barH = Math.round(W * 0.118)
   const sh = barH + shot.info.height
   const H = sh + 2 * pad
@@ -131,10 +134,11 @@ async function phoneRow(file, keys, { W, gap, lift = [], captions, margin = 80, 
 
 /** 「AI生成」标识（与应用里的玻璃胶囊同一版式） */
 const aiMark = (x, y, size = 15) => {
-  const w = size * 4.6
+  const label = english ? 'AI-generated' : 'AI生成'
+  const w = size * (english ? 7.4 : 4.6)
   const h = size * 1.9
   return `<rect x="${x - w}" y="${y - h}" width="${w}" height="${h}" rx="${h / 2}" fill="#fff" fill-opacity="0.72" stroke="#fff" stroke-opacity="0.9"/>
-    <text x="${x - w / 2}" y="${y - h / 2 + size * 0.36}" text-anchor="middle" font-family="${FONT}" font-size="${size}" font-weight="700" fill="${INK}">AI生成</text>`
+    <text x="${x - w / 2}" y="${y - h / 2 + size * 0.36}" text-anchor="middle" font-family="${FONT}" font-size="${size}" font-weight="700" fill="${INK}">${label}</text>`
 }
 
 /** 试穿流程：三件衣物 + 模特 → 正面、侧面、背面 */
@@ -180,8 +184,8 @@ async function tryon() {
     <path d="M${ax - 13} ${ay}h26M${ax + 3} ${ay - 11}l11 11-11 11" fill="none" stroke="#FFFAF6" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
     ${aiMark(mx + mw - 12, mTop + mh - 12, 14)}
     ${[0, 1, 2].map((i) => aiMark(vx + i * (vw + vGap) + vw - 12, top + vh - 12, 14)).join('')}
-    ${label(gx + gw / 2, '衣物')}${label(mx + mw / 2, '模特')}
-    ${['正面', '侧面', '背面'].map((t, i) => label(vx + i * (vw + vGap) + vw / 2, t)).join('')}`,
+    ${label(gx + gw / 2, english ? 'Clothes' : '衣物')}${label(mx + mw / 2, english ? 'Model' : '模特')}
+    ${(english ? ['Front', 'Side', 'Back'] : ['正面', '侧面', '背面']).map((t, i) => label(vx + i * (vw + vGap) + vw / 2, t)).join('')}`,
   )
   await canvas(width, height)
     .composite([
@@ -259,7 +263,12 @@ await tryon()
 await phoneRow('more.png', ['drawer', 'addSheet', 'dark', 'dynamic'], {
   W: 290,
   gap: 64,
-  captions: [
+  captions: english ? [
+    ['Menu', 'Categories, AI and sync'],
+    ['Add clothes', 'Photo, gallery or bulk import'],
+    ['Dark mode', 'Easier on the eyes at night'],
+    ['Dynamic colors', 'Follows the system palette'],
+  ] : [
     ['侧边栏', '分类、模特、AI 服务、同步'],
     ['添加衣物', '拍照、相册多选、批量导入'],
     ['深色模式', '夜里看也不刺眼'],

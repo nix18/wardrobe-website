@@ -1,5 +1,13 @@
 import { getCollection, type CollectionEntry } from 'astro:content'
+import summaries from '../data/release-summaries.en.json'
+
+import { type Language } from './language'
 import { compareVersions } from '../../scripts/release-utils.mjs'
+
+const localizedSummaries = import.meta.glob<Record<string, string>>('../data/releases/*/summaries.json', {
+  eager: true,
+  import: 'default',
+})
 
 export const REPO = 'nix18/wardrobe-website'
 export const REPO_URL = `https://github.com/${REPO}`
@@ -23,6 +31,14 @@ export const downloadUrl = (version: string) => `${REPO_URL}/releases/download/v
 export const releaseUrl = (version: string) => `${REPO_URL}/releases/tag/v${version}`
 
 export const formatSize = (bytes: number) => `${(bytes / 1048576).toFixed(1)} MB`
-export const formatDate = (date: Date) =>
-  new Intl.DateTimeFormat('zh-CN', { year: 'numeric', month: 'long', day: 'numeric', timeZone: 'Asia/Shanghai' }).format(date)
+export const formatDate = (date: Date, locale: string) =>
+  new Intl.DateTimeFormat(locale, { year: 'numeric', month: 'long', day: 'numeric', timeZone: 'Asia/Shanghai' }).format(date)
 export const isoDate = (date: Date) => date.toISOString().slice(0, 10)
+
+export function releaseSummary(release: Release, language: Language) {
+  if (language === 'zh') return release.data.summary
+  const version = release.data.version
+  const translated = localizedSummaries[`../data/releases/${language}/summaries.json`]?.[version]
+  const english: Record<string, string> = summaries
+  return translated ?? english[version] ?? `Wardrobe v${version}`
+}

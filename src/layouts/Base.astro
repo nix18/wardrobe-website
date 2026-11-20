@@ -1,6 +1,8 @@
 ---
 import '../styles/global.css'
 import Logo from '../components/Logo.astro'
+import { languagePath, languages, type Language } from '../lib/language'
+import { translations } from '../lib/translate'
 import { latest, downloadUrl } from '../lib/releases'
 
 interface Props {
@@ -10,38 +12,44 @@ interface Props {
   page?: 'home' | 'download' | 'changelog' | 'privacy'
 }
 
+const { language, base, locale, t } = translations(Astro.url.pathname)
+const options = Object.entries(languages) as [Language, (typeof languages)[Language]][]
+const brand = t('Wardrobe', '小衣柜')
 const {
   title,
-  description = '小衣柜是一款本地优先的 Android 衣橱应用：拍照入库，AI 自动识别标签，用一句话找衣服；挑几件衣服，生成模特的正面、侧面、背面试穿图。',
+  description = t('Wardrobe is a local-first Android app for organizing clothes. Add photos, tag items with AI, search in your own words, and generate front, side, and back try-on images.', '小衣柜是一款本地优先的 Android 衣橱应用：拍照入库，AI 自动识别标签，用一句话找衣服；挑几件衣服，生成模特的正面、侧面、背面试穿图。'),
   page,
 } = Astro.props
-const fullTitle = title ? `${title} · 小衣柜` : '小衣柜 — 会整理、会试穿的 AI 衣橱'
-const base = import.meta.env.BASE_URL
+const fullTitle = title ? `${title} · ${brand}` : t('Wardrobe — Organize clothes and try on outfits with AI', '小衣柜 — 会整理、会试穿的 AI 衣橱')
 const canonical = new URL(Astro.url.pathname, Astro.site)
-const og = new URL(`${base}og.png`, Astro.site)
+const og = new URL(`${import.meta.env.BASE_URL}og.png`, Astro.site)
 const release = await latest()
 const nav = [
-  { href: `${base}#features`, label: '功能', key: 'features' },
-  { href: `${base}#screens`, label: '界面', key: 'screens' },
-  { href: `${base}changelog/`, label: '更新日志', key: 'changelog' },
-  { href: `${base}download/`, label: '下载', key: 'download' },
+  { href: `${base}#features`, label: t('Features', '功能'), key: 'features' },
+  { href: `${base}#screens`, label: t('Screenshots', '界面'), key: 'screens' },
+  { href: `${base}changelog/`, label: t('Changelog', '更新日志'), key: 'changelog' },
+  { href: `${base}download/`, label: t('Download', '下载'), key: 'download' },
 ]
 ---
 
 <!doctype html>
-<html lang="zh-CN">
+<html lang={locale}>
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{fullTitle}</title>
     <meta name="description" content={description} />
     <link rel="canonical" href={canonical} />
-    <link rel="icon" href={`${base}favicon.svg`} type="image/svg+xml" />
-    <link rel="apple-touch-icon" href={`${base}icon-180.png`} />
+    {options.map(([code, option]) => (
+      <link rel="alternate" hreflang={option.locale} href={new URL(languagePath(Astro.url.pathname, code), Astro.site)} />
+    ))}
+    <link rel="alternate" hreflang="x-default" href={new URL(languagePath(Astro.url.pathname, 'en'), Astro.site)} />
+    <link rel="icon" href={`${import.meta.env.BASE_URL}favicon.svg`} type="image/svg+xml" />
+    <link rel="apple-touch-icon" href={`${import.meta.env.BASE_URL}icon-180.png`} />
     <meta name="theme-color" content="#f5f0ea" media="(prefers-color-scheme: light)" />
     <meta name="theme-color" content="#181513" media="(prefers-color-scheme: dark)" />
     <meta property="og:type" content="website" />
-    <meta property="og:site_name" content="小衣柜" />
+    <meta property="og:site_name" content={brand} />
     <meta property="og:title" content={fullTitle} />
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonical} />
@@ -49,14 +57,14 @@ const nav = [
     <meta name="twitter:card" content="summary_large_image" />
   </head>
   <body data-page={page}>
-    <a class="skip visually-hidden" href="#main">跳到正文</a>
+    <a class="skip visually-hidden" href="#main">{t('Skip to content', '跳到正文')}</a>
     <header class="site-header">
       <div class="wrap header-inner">
-        <a class="brand" href={base} aria-label="小衣柜首页">
+        <a class="brand" href={base} aria-label={t('Wardrobe home', '小衣柜首页')}>
           <Logo size={34} />
-          <span>小衣柜</span>
+          <span>{brand}</span>
         </a>
-        <nav aria-label="主导航">
+        <nav aria-label={t('Main navigation', '主导航')}>
           <ul>
             {
               nav.map((item) => (
@@ -69,8 +77,25 @@ const nav = [
             }
           </ul>
         </nav>
+        <details class="language-switch">
+          <summary aria-label={t('Language', '语言')}>
+            <span aria-hidden="true">{language === 'zh-hant' ? '繁' : language === 'zh' ? '简' : language.toUpperCase()}</span>
+          </summary>
+          <ul aria-label={t('Language', '语言')}>
+            {options.map(([code, option]) => (
+              <li>
+                <a href={`${languagePath(Astro.url.pathname, code)}?lang=${code}`}
+                  lang={option.locale} hreflang={option.locale}
+                  aria-current={language === code ? 'true' : undefined}
+                  data-language-choice={code}>
+                  {option.name}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </details>
         <a class="btn btn-primary btn-sm header-cta" href={downloadUrl(release.data.version)} data-download>
-          下载 v{release.data.version}
+          {t('Download', '下载')} v{release.data.version}
         </a>
       </div>
     </header>
@@ -84,36 +109,38 @@ const nav = [
         <div class="footer-brand">
           <a class="brand" href={base}>
             <Logo size={30} />
-            <span>小衣柜</span>
+            <span>{brand}</span>
           </a>
-          <p class="muted">会整理、会试穿的 AI 衣橱。<br />本机保存，按你的选择使用 AI 与同步。</p>
+          <p class="muted">{t('Organize and try on outfits with AI.', '会整理、会试穿的 AI 衣橱。')}<br />{t('Stored on your phone, with optional AI and sync.', '本机保存，按你的选择使用 AI 与同步。')}</p>
         </div>
         <div class="footer-links">
           <div>
-            <h3>产品</h3>
-            <a href={`${base}#features`}>功能</a>
-            <a href={`${base}#screens`}>界面</a>
-            <a href={`${base}#faq`}>常见问题</a>
+            <h3>{t('Product', '产品')}</h3>
+            <a href={`${base}#features`}>{t('Features', '功能')}</a>
+            <a href={`${base}#screens`}>{t('Screenshots', '界面')}</a>
+            <a href={`${base}#faq`}>{t('FAQ', '常见问题')}</a>
           </div>
           <div>
-            <h3>下载</h3>
-            <a href={`${base}download/`}>最新版 v{release.data.version}</a>
-            <a href={`${base}download/history/`}>历史版本</a>
-            <a href={`${base}changelog/`}>更新日志</a>
+            <h3>{t('Download', '下载')}</h3>
+            <a href={`${base}download/`}>{t('Latest version', '最新版')} v{release.data.version}</a>
+            <a href={`${base}download/history/`}>{t('Previous versions', '历史版本')}</a>
+            <a href={`${base}changelog/`}>{t('Changelog', '更新日志')}</a>
           </div>
           <div>
-            <h3>关于</h3>
-            <a href={`${base}privacy/`}>隐私政策</a>
+            <h3>{t('About', '关于')}</h3>
+            <a href={`${base}privacy/`}>{t('Privacy policy', '隐私政策')}</a>
           </div>
         </div>
       </div>
       <div class="wrap footer-bottom muted">
-        <span>© {new Date().getFullYear()} 小衣柜</span>
-        <span>本网站中的模特、衣物与试穿图片均为 AI 生成的示例。</span>
+        <span>© {new Date().getFullYear()} {brand}</span>
+        <span>{t('The models, clothing, and try-on images on this site are AI-generated examples.', '本网站中的模特、衣物与试穿图片均为 AI 生成的示例。')}</span>
       </div>
     </footer>
 
     <script>
+      import '../lib/select-language'
+
       // 滚动到视野内时淡入
       const items = document.querySelectorAll('.reveal')
       document.documentElement.classList.add('js-reveal')
@@ -183,6 +210,7 @@ const nav = [
   }
 
   nav {
+    min-width: 0;
     margin-left: auto;
   }
 
@@ -211,6 +239,52 @@ const nav = [
     color: var(--ink);
   }
 
+  .language-switch {
+    position: relative;
+    color: var(--ink-2);
+    font-size: 14px;
+    flex: 0 0 auto;
+  }
+
+  .language-switch summary {
+    cursor: pointer;
+    display: grid;
+    place-items: center;
+    min-width: 30px;
+    min-height: 36px;
+    list-style: none;
+  }
+
+  .language-switch summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .language-switch ul {
+    z-index: 1;
+    position: absolute;
+    inset-inline-end: 0;
+    top: 100%;
+    min-width: 132px;
+    margin: 4px 0 0;
+    padding: 5px;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    background: var(--card);
+    list-style: none;
+  }
+
+  .language-switch a {
+    display: block;
+    padding: 6px 10px;
+    border-radius: 6px;
+    white-space: nowrap;
+  }
+
+  .language-switch a:hover,
+  .language-switch a[aria-current] {
+    background: var(--paper-2);
+  }
+
   @media (max-width: 760px) {
     .header-inner {
       gap: 12px;
@@ -224,6 +298,31 @@ const nav = [
     }
     .header-cta {
       display: none;
+    }
+  }
+
+  @media (max-width: 380px) {
+    .header-inner {
+      gap: 5px;
+    }
+    .header-inner .brand {
+      gap: 6px;
+      font-size: 15px;
+    }
+    .header-inner .brand :global(svg) {
+      width: 26px;
+      height: 26px;
+      flex-shrink: 0;
+    }
+    nav ul li:nth-child(3) {
+      display: none;
+    }
+    nav a {
+      padding-inline: 3px;
+      font-size: 12px;
+    }
+    .language-switch {
+      font-size: 13px;
     }
   }
 

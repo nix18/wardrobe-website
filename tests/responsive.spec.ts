@@ -23,6 +23,10 @@ async function fitsViewport(page: Page) {
   expect(result.scroll, JSON.stringify(result)).toBeLessThanOrEqual(result.client + 1)
 }
 
+test.beforeEach(async ({ page }) => {
+  await page.route('https://api.country.is/', route => route.fulfill({ json: { country: 'US' } }))
+})
+
 test.describe('mobile pages', () => {
   test.use({ isMobile: true, hasTouch: true, deviceScaleFactor: 1 })
   for (const width of [320, 360, 390, 414, 430]) {
@@ -42,6 +46,26 @@ test.describe('mobile pages', () => {
           expect(button.height).toBeLessThanOrEqual(56)
           expect(button.content).toBeLessThanOrEqual(button.width + 1)
         }
+      })
+    }
+  }
+
+  for (const path of ['zh/', 'zh/download/', 'zh/download/history/', 'zh/changelog/', 'zh/privacy/']) {
+    test(`320px ${path} fits the viewport`, async ({ page }) => {
+      await page.setViewportSize({ width: 320, height: 844 })
+      await page.goto(path)
+      await settle(page)
+      await fitsViewport(page)
+    })
+  }
+
+  for (const language of ['zh-hant', 'es', 'fr', 'pt', 'de', 'ja']) {
+    for (const route of ['', 'download/', 'download/history/', 'changelog/', 'privacy/']) {
+      test(`320px ${language}/${route} fits the viewport`, async ({ page }) => {
+        await page.setViewportSize({ width: 320, height: 844 })
+        await page.goto(`${language}/${route}`)
+        await settle(page)
+        await fitsViewport(page)
       })
     }
   }

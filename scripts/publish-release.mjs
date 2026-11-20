@@ -16,7 +16,10 @@ const summary=option('summary');if(!summary) throw new Error('需要 --summary �
 const date=option('date')??new Date().toISOString()
 if(Number.isNaN(Date.parse(date))) throw new Error('无效的发布日期')
 const gh=(params)=>execFileSync('gh',params,{encoding:'utf8'})
-const release=(repo)=>JSON.parse(gh(['release','view',`v${version}`,'--repo',repo,'--json','tagName,body,assets']))
+const release=(repo)=>{
+  const match=gh(['api','--paginate',`repos/${repo}/releases?per_page=100`, '--jq', `.[] | select(.tag_name == "v${version}")`])
+  return match.trim()?JSON.parse(match):undefined
+}
 const expected=`wardrobe-${version}.apk`
 const work=mkdtempSync(join(root,'.release-work-'))
 try {
@@ -24,7 +27,7 @@ try {
   const source=option('source-repo')
   if(source) {
     const published=release(source)
-    const asset=published.assets.find(a=>a.name===expected)
+    const asset=published?.assets.find(a=>a.name===expected)
     if(!asset?.digest?.startsWith('sha256:')) throw new Error('来源 Release 缺少 APK SHA-256，停止发布')
     expectedSha=asset.digest.slice(7)
     gh(['release','download',`v${version}`,'--repo',source,'--pattern',expected,'--dir',work])
@@ -40,17 +43,15 @@ try {
   writeFileSync(notesFile,`${notes}\n\n---\n\nSHA-256（${expected}）：\`${sha}\`\n`)
   const upload=!args.includes('--no-upload')
   if(upload) {
-    let current
-    // API 失败不能误判为“版本不存在”；先列出 releases 再确定是否创建。
-    const releases=JSON.parse(gh(['api',`repos/${REPO}/releases?per_page=100`]))
-    current=releases.find(r=>r.tag_name===`v${version}`)
+    // REST exposes asset digests and returns drafts to callers with push access.
+    const current=release(REPO)
     if(!current) gh(['release','create',`v${version}`,apk,'--repo',REPO,'--title',`小衣柜 v${version}`,'--notes-file',notesFile,'--draft'])
     else {
-      const old=release(REPO).assets.find(a=>a.name===expected)
+      const old=current.assets.find(a=>a.name===expected)
       if(shouldUploadAsset(old,sha,size,args.includes('--replace')))
         gh(['release','upload',`v${version}`,apk,'--repo',REPO,'--clobber'])
     }
-    const uploaded=release(REPO).assets.find(a=>a.name===expected)
+    const uploaded=release(REPO)?.assets.find(a=>a.name===expected)
     if(uploaded?.digest!==`sha256:${sha}`||uploaded.size!==size) throw new Error('公开资源校验失败，站点元数据未更新')
     gh(['release','edit',`v${version}`,'--repo',REPO,'--draft=false','--latest','--notes-file',notesFile])
   }
