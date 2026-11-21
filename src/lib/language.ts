@@ -17,7 +17,7 @@ export const languagePreferenceKey = 'wardrobe-language'
 const siteBase = import.meta.env.BASE_URL.replace(/\/$/, '') + '/'
 
 export function isLanguage(value: string | null | undefined): value is Language {
-  return typeof value === 'string' && Object.hasOwn(languages, value)
+  return typeof value === 'string' && Object.prototype.hasOwnProperty.call(languages, value)
 }
 
 export function pageLanguage(pathname: string): Language {

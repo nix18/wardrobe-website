@@ -1,4 +1,5 @@
 {
+  "Automatic (IP region)": "Automatique (région IP)",
   ".": ".",
   "01 · Organize": "01 · Organiser",
   "02 · Find": "02 · Recherche",
@@ -144,7 +145,7 @@
   "The same design, easier on the eyes at night": "Le même design, plus facile sur les yeux la nuit",
   "This page is missing from the wardrobe": "Cette page est manquante dans le wardrobe",
   "Three views": "Trois vues",
-  "To select a language on your first visit, the website asks country.is for the country associated with your IP address. The provider receives the IP address as part of that request. This does not send any data from the Android app. Selecting a language manually saves that choice in your browser and skips future lookups.": "Lors de votre première visite, le site interroge country.is pour connaître le pays ou la région associé à votre adresse IP et choisir la langue d’affichage. Le service reçoit votre adresse IP lors de cette requête. Le site ne transmet aucune donnée de l’application Android. Si vous choisissez une langue manuellement, votre navigateur mémorise ce choix et le site ne fait plus cette recherche.",
+  "When you open a default-language page in automatic mode, the website asks country.is for the country or region associated with your IP address. The provider receives your IP address with the request. This does not send any data from the Android app. A manual language choice is saved in your browser and skips future lookups. Select Automatic (IP region) in the language menu to restore automatic selection.": "En mode automatique, lorsque vous ouvrez une page dans la langue par défaut, le site interroge country.is pour connaître le pays ou la région associé à votre adresse IP. Le service reçoit votre adresse IP lors de cette requête. Le site ne transmet aucune donnée de l’application Android. Si vous choisissez une langue manuellement, le navigateur mémorise ce choix et le site ne fait plus ces recherches. Choisissez « Automatique (région IP) » dans le menu des langues pour réactiver la sélection automatique.",
   "Try-on backgrounds": "Fond Essayage virtuel",
   "Try-on: {view}": "Essayage virtuel: {view}",
   "Two-column layout with photos in their original proportions": "Mise en page de deux colonnes avec des photos dans leurs proportions originales",

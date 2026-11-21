@@ -14,8 +14,6 @@ const countries: Partial<Record<Language, string[]>> = {
   es: ['AR', 'BO', 'CL', 'CO', 'CR', 'CU', 'DO', 'EC', 'ES', 'GQ', 'GT', 'HN', 'MX', 'NI', 'PA', 'PE', 'PY', 'SV', 'UY', 'VE'],
 }
 
-const regionKey = languagePreferenceKey + '-region'
-
 function stored(key: string, persistent = false) {
   try {
     return (persistent ? localStorage : sessionStorage).getItem(key)
@@ -40,6 +38,14 @@ function remember(language: Language) {
   save(languagePreferenceKey, language)
 }
 
+function clearPreference() {
+  for (const storage of ['localStorage', 'sessionStorage'] as const) {
+    try {
+      window[storage].removeItem(languagePreferenceKey)
+    } catch {}
+  }
+}
+
 function withLanguage(language: Language) {
   const target = new URL(location.href)
   target.pathname = languagePath(target.pathname, language)
@@ -54,11 +60,14 @@ function navigate(language: Language) {
 }
 
 async function detectRegion() {
+  const controller = new AbortController()
+  const timeout = window.setTimeout(() => controller.abort(), 3500)
   try {
     const response = await fetch(countryEndpoint, {
+      cache: 'no-store',
       credentials: 'omit',
       referrerPolicy: 'no-referrer',
-      signal: AbortSignal.timeout(2000),
+      signal: controller.signal,
     })
     if (!response.ok) return 'en'
     const result: { country?: unknown } = await response.json()
@@ -69,17 +78,19 @@ async function detectRegion() {
     return (Object.keys(countries) as Language[]).find(language => countries[language]?.includes(country)) ?? 'en'
   } catch {
     return 'en'
+  } finally {
+    window.clearTimeout(timeout)
   }
 }
 
 for (const link of links) {
-  const language = link.dataset.languageChoice
-  if (!isLanguage(language)) continue
-  const target = withLanguage(language)
-  target.searchParams.set('lang', language)
+  const choice = link.dataset.languageChoice
+  if (choice !== 'auto' && !isLanguage(choice)) continue
+  const target = withLanguage(choice === 'auto' ? 'en' : choice)
+  target.searchParams.set('lang', choice)
   link.href = target.href
   link.addEventListener('click', () => {
-    remember(language)
+    if (choice !== 'auto') remember(choice)
     link.hash = location.hash
   })
 }
@@ -88,16 +99,17 @@ const explicit = url.searchParams.get('lang')
 if (isLanguage(explicit)) {
   remember(explicit)
   navigate(explicit)
-} else if (current === 'en') {
+} else if (explicit === 'auto' || current === 'en') {
+  if (explicit === 'auto') {
+    clearPreference()
+    url.searchParams.delete('lang')
+    history.replaceState(history.state, '', url)
+  }
   const selected = preferred()
-  const detected = stored(regionKey)
   if (selected) {
     navigate(selected)
-  } else if (isLanguage(detected)) {
-    navigate(detected)
   } else {
     void detectRegion().then(language => {
-      save(regionKey, language)
       if (!preferred()) navigate(language)
     })
   }
