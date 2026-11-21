@@ -24,7 +24,7 @@
 
 ## 页面
 
-下表的路径是英文页面。简体中文、繁體中文、法语、葡萄牙语、西班牙语、德语和日语页面分别使用 `/zh/`、`/zh-hant/`、`/fr/`、`/pt/`、`/es/`、`/de/` 和 `/ja/` 前缀。网站通过 country.is 查询访问 IP 所在的国家或地区。台湾、香港和澳门默认显示繁體中文，中国大陆默认显示简体中文；无匹配语言时显示英文。页眉可手动切换，浏览器会记住选择。
+下表的路径是英文页面。简体中文、繁體中文、法语、葡萄牙语、西班牙语、德语和日语页面分别使用 `/zh/`、`/zh-hant/`、`/fr/`、`/pt/`、`/es/`、`/de/` 和 `/ja/` 前缀。网站通过 country.is 查询访问 IP 所在的国家或地区。台湾、香港和澳门默认显示繁體中文，中国大陆默认显示简体中文；无匹配语言时显示英文。页眉可手动切换，浏览器会记住选择。应用截图也随页面语言切换。
 
 | 路径 | 内容 |
 | --- | --- |
@@ -71,10 +71,10 @@ Pages 来源保持 **Deploy from a branch → gh-pages → /**，`github-pages` 
 
 | 目录 | 怎么来的 | 怎么重新生成 |
 | --- | --- | --- |
-| `src/assets/screens/` | 应用的截图测试 | 在应用仓库跑 `./gradlew :app:testDebugUnitTest -Pscreenshots` |
+| `src/assets/screens/<语言>/` | 应用的截图测试 | 在应用仓库跑 `./gradlew :app:testDebugUnitTest -Pscreenshots -PscreenshotLocale=fr`，换成所需语言标签。把 `src/lib/screens.ts` 所列的图片从 `app/build/screens/<标签>/` 转成无损 WebP。简体中文目录用 `zh`，繁体中文用 `zh-hant`。 |
 | `src/assets/photos/` | 图像模型，提示词在 `art/photo-prompts.mjs` | `npm run gen-images`，要设 `IMAGE_API_BASE`、`IMAGE_API_KEY` |
 | `public/og.png`、`public/icon-180.png` | 分享预览图、触屏图标 | `npm run og-image` |
-| `docs/readme/` | 这份 README 的配图 | `npm run readme-images`。网站预览图需要桌面与手机截图。英文配图用 `README_LANGUAGE=en` 和 `README_SCREEN_DIR` 指定英文应用截图。 |
+| `docs/readme/` | 这份 README 的配图 | `npm run readme-images`。网站预览图需要桌面与手机截图。英文配图用 `README_LANGUAGE=en`。 |
 
 示例照片也是应用截图测试里的样图。网站上的模特、衣物和试穿图都是 AI 生成的，页脚写明了。
 

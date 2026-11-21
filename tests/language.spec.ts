@@ -67,3 +67,27 @@ test('language links work without JavaScript', async ({ browser }) => {
   await expect(page.locator('html')).toHaveAttribute('lang', 'fr')
   await context.close()
 })
+
+test('every phone screenshot follows the selected website language', async ({ page }) => {
+  await page.goto('?lang=en')
+  const preview = page.locator('.phone picture img')
+  await expect(preview).toHaveCount(14)
+  const sources = () => preview.evaluateAll(images => images.map(img => img.getAttribute('src')))
+  const localizedSources = (await sources()).map(src => new Set([src]))
+
+  for (const [label, locale] of [
+    ['简体中文', 'zh-CN'], ['繁體中文', 'zh-Hant'], ['Français', 'fr'], ['Português', 'pt'],
+    ['Español', 'es'], ['Deutsch', 'de'], ['日本語', 'ja'],
+  ]) {
+    await page.locator('.language-switch summary').click()
+    await page.getByRole('link', { name: label, exact: true }).click()
+    await expect(page.locator('html')).toHaveAttribute('lang', locale)
+    await expect(preview).toHaveCount(14)
+    const current = await sources()
+    current.forEach((src, index) => {
+      expect(src, `${locale} screenshot ${index + 1}`).toBeTruthy()
+      expect(localizedSources[index].has(src), `${locale} screenshot ${index + 1}`).toBe(false)
+      localizedSources[index].add(src)
+    })
+  }
+})

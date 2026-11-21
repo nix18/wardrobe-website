@@ -4,7 +4,7 @@
 //   tryon.png   试穿流程：衣物 + 模特 → 正面、侧面、背面
 //   more.png    更多界面（带标题）
 //   site.png    网站预览（传入两张网站截图时生成）
-// 界面截图默认取自 src/assets/screens。也可用 README_SCREEN_DIR 指定截图目录。
+// 界面截图默认取自 src/assets/screens/<语言>。README_SCREEN_DIR 可指定应用测试输出的 PNG 截图目录。
 // README_LANGUAGE=en 生成英文标题。简体中文标题需要系统安装中文字体。
 import { mkdirSync, readFileSync } from 'node:fs'
 import { dirname, join } from 'node:path'
@@ -13,8 +13,9 @@ import sharp from 'sharp'
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..')
 const [out, desktopShot, mobileShot] = process.argv.slice(2)
-const screenDir = process.env.README_SCREEN_DIR || join(root, 'src/assets/screens')
 const english = process.env.README_LANGUAGE === 'en'
+const screenDir = process.env.README_SCREEN_DIR || join(root, 'src/assets/screens', english ? 'en' : 'zh')
+const screenFormat = process.env.README_SCREEN_DIR ? 'png' : 'webp'
 if (!out) throw new Error('用法：node scripts/readme-images.mjs <输出目录> [网站桌面截图 网站手机截图]')
 mkdirSync(out, { recursive: true })
 
@@ -70,7 +71,7 @@ async function phone(key, W) {
   const [file, bar, dark] = SCREENS[key]
   const pad = Math.round(W * 0.034)
   const sw = W - 2 * pad
-  const shot = await sharp(join(screenDir, `${file}.png`)).resize({ width: sw }).png().toBuffer({ resolveWithObject: true })
+  const shot = await sharp(join(screenDir, `${file}.${screenFormat}`)).resize({ width: sw }).png().toBuffer({ resolveWithObject: true })
   const barH = Math.round(W * 0.118)
   const sh = barH + shot.info.height
   const H = sh + 2 * pad

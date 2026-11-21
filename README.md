@@ -34,7 +34,7 @@ Wardrobe is an Android app for organizing clothes, tagging photos with AI, searc
 | `/changelog/` | Changelog with the latest three releases expanded |
 | `/privacy/` | App privacy policy and the website’s language lookup disclosure |
 
-Use `/zh/`, `/zh-hant/`, `/fr/`, `/pt/`, `/es/`, `/de/`, or `/ja/` for Simplified Chinese, Traditional Chinese, French, Portuguese, Spanish, German, or Japanese. English uses the unprefixed paths. The site uses country.is to infer the visitor’s country or region, including Traditional Chinese for Taiwan, Hong Kong, and Macao and Simplified Chinese for mainland China. English is the fallback. The header language menu remembers a manual choice. All locales have static URLs that work without JavaScript.
+Use `/zh/`, `/zh-hant/`, `/fr/`, `/pt/`, `/es/`, `/de/`, or `/ja/` for Simplified Chinese, Traditional Chinese, French, Portuguese, Spanish, German, or Japanese. English uses the unprefixed paths. The site uses country.is to infer the visitor’s country or region, including Traditional Chinese for Taiwan, Hong Kong, and Macao and Simplified Chinese for mainland China. English is the fallback. The header language menu remembers a manual choice. App screenshots match each page’s language. All locales have static URLs that work without JavaScript.
 
 Shared styles are in `src/styles/global.css`. The site follows the visitor’s color scheme and honors reduced-motion settings for the screenshot gallery.
 
@@ -72,9 +72,9 @@ The Pages workflow tests and builds the site, updates `gh-pages` with the verifi
 
 | Path | Source and regeneration |
 | --- | --- |
-| `src/assets/screens/` | Run `./gradlew :app:testDebugUnitTest -Pscreenshots` in the app repository |
+| `src/assets/screens/<language>/` | In the app repository, run `./gradlew :app:testDebugUnitTest -Pscreenshots -PscreenshotLocale=fr` with the desired language tag. Convert the captures listed in `src/lib/screens.ts` from `app/build/screens/<tag>/` to lossless WebP. Use `zh` for `zh-Hans` and `zh-hant` for `zh-Hant`. |
 | `src/assets/photos/` | Run `npm run gen-images` with `IMAGE_API_BASE` and `IMAGE_API_KEY`. Prompts are in `art/photo-prompts.mjs`. |
 | `public/og.png`, `public/icon-180.png` | Run `npm run og-image` |
-| `docs/readme/` | Run `npm run readme-images`. Pass desktop and mobile site captures to generate `site.png`. Use `README_LANGUAGE=en` with `README_SCREEN_DIR` pointed at English app screenshots for the English images. |
+| `docs/readme/` | Run `npm run readme-images`. Pass desktop and mobile site captures to generate `site.png`. Set `README_LANGUAGE=en` for the English images. |
 
 The model, garment, and try-on photos on the site are AI-generated examples.
