@@ -16,5 +16,6 @@
   "1.0.14": "Choose a built-in studio or extract a background from a photo. Generate outfit, pose, and background together across three views.",
   "1.0.15": "Identify layered garments individually, review their crops and order, and preserve left/right placement and garment construction in back views.",
   "1.0.15-r1": "Unified item categories and search, show each selected garment in try-on history, and improved headband search and accessory consistency across views.",
-  "1.0.16": "Wardrobe now follows your phone’s language and supports eight languages. The website adds regional language selection and updated screenshots."
+  "1.0.16": "Wardrobe now follows your phone’s language and supports eight languages. The website adds regional language selection and updated screenshots.",
+  "1.0.16-r1": "Choose the app language in Profile. Every website screenshot now matches the page language."
 }
