@@ -1,4 +1,5 @@
 {
+  "Automatic (IP region)": "Automatisch (IP-Region)",
   ".": ".",
   "01 · Organize": "01 · Organisieren",
   "02 · Find": "02 · Suchen",
@@ -144,7 +145,7 @@
   "The same design, easier on the eyes at night": "Das gleiche Design, leichter auf die Augen in der Nacht",
   "This page is missing from the wardrobe": "Diese Seite fehlt im wardrobe",
   "Three views": "Drei Ansichten",
-  "To select a language on your first visit, the website asks country.is for the country associated with your IP address. The provider receives the IP address as part of that request. This does not send any data from the Android app. Selecting a language manually saves that choice in your browser and skips future lookups.": "Beim ersten Besuch fragt die Website bei country.is ab, welchem Land oder welcher Region Ihre IP-Adresse zugeordnet ist, um die Sprache auszuwählen. Bei dieser Anfrage erhält der Dienst Ihre IP-Adresse. Die Website übermittelt dabei keine Daten aus der Android-App. Wenn Sie die Sprache manuell auswählen, speichert Ihr Browser die Auswahl und die Website fragt den Standort künftig nicht erneut ab.",
+  "When you open a default-language page in automatic mode, the website asks country.is for the country or region associated with your IP address. The provider receives your IP address with the request. This does not send any data from the Android app. A manual language choice is saved in your browser and skips future lookups. Select Automatic (IP region) in the language menu to restore automatic selection.": "Wenn Sie im automatischen Modus eine Seite in der Standardsprache öffnen, fragt die Website bei country.is ab, welchem Land oder welcher Region Ihre IP-Adresse zugeordnet ist. Der Dienst erhält Ihre IP-Adresse bei der Anfrage. Dabei werden keine Daten aus der Android-App übermittelt. Eine manuelle Sprachwahl wird im Browser gespeichert und überspringt weitere Abfragen. Wählen Sie im Sprachmenü „Automatisch (IP-Region)“, um die automatische Auswahl wieder zu aktivieren.",
   "Try-on backgrounds": "Virtuelle Anprobe Hintergründe",
   "Try-on: {view}": "Virtuelle Anprobe: {view}",
   "Two-column layout with photos in their original proportions": "Zwei-Säulen-Layout mit Fotos in ihren ursprünglichen Proportionen",

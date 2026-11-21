@@ -35,11 +35,46 @@ test('keeps English when the lookup fails and honors a manual Chinese choice', a
   expect(lookups).toBe(1)
 })
 
-test('keeps English for a country outside the localized regions', async ({ page }) => {
-  await page.route(countryEndpoint, route => route.fulfill({ json: { country: 'US' } }))
+test('retries after a failed lookup and uses the current country on the next visit', async ({ page }) => {
+  let country: string | undefined
+  await page.route(countryEndpoint, route => country
+    ? route.fulfill({ json: { country } })
+    : route.abort())
+
+  const failed = page.waitForEvent('requestfailed', { predicate: request => request.url() === countryEndpoint })
   await page.goto('download/')
+  await failed
   await expect(page.getByRole('heading', { name: 'Download Wardrobe' })).toBeVisible()
-  await expect(page).toHaveURL(/\/wardrobe-website\/download\/$/)
+
+  country = 'US'
+  const response = page.waitForResponse(countryEndpoint)
+  await page.reload()
+  await response
+  await expect(page.getByRole('heading', { name: 'Download Wardrobe' })).toBeVisible()
+
+  country = 'TW'
+  await page.reload()
+  await expect(page).toHaveURL(/\/zh-hant\/download\/$/)
+  await expect(page.locator('html')).toHaveAttribute('lang', 'zh-Hant')
+})
+
+test('restores IP selection from a manually selected language and preserves the page', async ({ page }) => {
+  let lookups = 0
+  await page.route(countryEndpoint, route => {
+    lookups += 1
+    return route.fulfill({ json: { country: 'TW' } })
+  })
+
+  await page.goto('fr/changelog/?campaign=test&lang=fr#v1.0.15-r1')
+  await expect(page.locator('html')).toHaveAttribute('lang', 'fr')
+  expect(lookups).toBe(0)
+  await page.locator('.language-switch summary').click()
+  await page.getByRole('link', { name: 'Automatique (région IP)', exact: true }).click()
+  await expect(page).toHaveURL(/\/zh-hant\/changelog\/\?campaign=test#v1\.0\.15-r1$/)
+
+  await page.goto('download/')
+  await expect(page).toHaveURL(/\/zh-hant\/download\/$/)
+  expect(lookups).toBe(2)
 })
 
 for (const [country, language, title] of [

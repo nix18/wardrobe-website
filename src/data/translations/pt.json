@@ -1,4 +1,5 @@
 {
+  "Automatic (IP region)": "Automático (região do IP)",
   ".": ".",
   "01 · Organize": "01 · Organizar",
   "02 · Find": "02 · Procurar",
@@ -144,7 +145,7 @@
   "The same design, easier on the eyes at night": "O mesmo design, mais fácil sobre os olhos à noite",
   "This page is missing from the wardrobe": "Esta página está faltando no wardrobe",
   "Three views": "Três visualizações",
-  "To select a language on your first visit, the website asks country.is for the country associated with your IP address. The provider receives the IP address as part of that request. This does not send any data from the Android app. Selecting a language manually saves that choice in your browser and skips future lookups.": "Na primeira visita, o site consulta o country.is para saber a qual país ou região seu endereço IP está associado e escolher o idioma. O serviço recebe seu endereço IP nessa consulta. O site não envia dados do aplicativo Android durante esse processo. Se você escolher um idioma manualmente, o navegador guarda sua preferência e o site deixa de fazer essas consultas.",
+  "When you open a default-language page in automatic mode, the website asks country.is for the country or region associated with your IP address. The provider receives your IP address with the request. This does not send any data from the Android app. A manual language choice is saved in your browser and skips future lookups. Select Automatic (IP region) in the language menu to restore automatic selection.": "No modo automático, ao abrir uma página no idioma padrão, o site consulta o country.is para identificar o país ou a região associado ao seu endereço IP. O serviço recebe seu endereço IP nessa consulta. O site não envia dados do aplicativo Android durante esse processo. Se você escolher um idioma manualmente, o navegador salva essa preferência e o site deixa de fazer essas consultas. Selecione «Automático (região do IP)» no menu de idiomas para restaurar a seleção automática.",
   "Try-on backgrounds": "Fundos do Prova virtual",
   "Try-on: {view}": "Prova virtual: {view}",
   "Two-column layout with photos in their original proportions": "layout de duas colunas com fotos em suas proporções originais",

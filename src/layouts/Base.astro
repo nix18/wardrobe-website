@@ -82,6 +82,11 @@ const nav = [
             <span aria-hidden="true">{language === 'zh-hant' ? '繁' : language === 'zh' ? '简' : language.toUpperCase()}</span>
           </summary>
           <ul aria-label={t('Language', '语言')}>
+            <li>
+              <a href={`${languagePath(Astro.url.pathname, 'en')}?lang=auto`} data-language-choice="auto">
+                {t('Automatic (IP region)', '自动（IP 地区）')}
+              </a>
+            </li>
             {options.map(([code, option]) => (
               <li>
                 <a href={`${languagePath(Astro.url.pathname, code)}?lang=${code}`}

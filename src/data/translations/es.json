@@ -1,4 +1,5 @@
 {
+  "Automatic (IP region)": "Automático (región de IP)",
   ".": ".",
   "01 · Organize": "01 · Organizar",
   "02 · Find": "02 · Buscar",
@@ -144,7 +145,7 @@
   "The same design, easier on the eyes at night": "El mismo diseño, más fácil en los ojos por la noche",
   "This page is missing from the wardrobe": "Esta página está desaparecida desde el wardrobe",
   "Three views": "Tres opiniones",
-  "To select a language on your first visit, the website asks country.is for the country associated with your IP address. The provider receives the IP address as part of that request. This does not send any data from the Android app. Selecting a language manually saves that choice in your browser and skips future lookups.": "En tu primera visita, el sitio consulta a country.is para saber a qué país o región corresponde tu dirección IP y elegir el idioma. El servicio recibe tu dirección IP con la consulta. Durante este proceso, el sitio no envía datos de la aplicación de Android. Si eliges un idioma manualmente, el navegador guarda tu preferencia y el sitio deja de hacer estas consultas.",
+  "When you open a default-language page in automatic mode, the website asks country.is for the country or region associated with your IP address. The provider receives your IP address with the request. This does not send any data from the Android app. A manual language choice is saved in your browser and skips future lookups. Select Automatic (IP region) in the language menu to restore automatic selection.": "Al abrir una página en el idioma predeterminado con el modo automático activado, el sitio consulta a country.is para saber a qué país o región corresponde tu dirección IP. El servicio recibe tu dirección IP con la consulta. Durante este proceso, el sitio no envía datos de la aplicación de Android. Si eliges un idioma manualmente, el navegador guarda tu preferencia y el sitio deja de hacer estas consultas. Selecciona «Automático (región de IP)» en el menú de idiomas para volver a la selección automática.",
   "Try-on backgrounds": "Prueba virtual fondos",
   "Try-on: {view}": "Prueba virtual: {view}",
   "Two-column layout with photos in their original proportions": "Diseño de dos columnas con fotos en sus proporciones originales",

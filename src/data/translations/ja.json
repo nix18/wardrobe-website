@@ -1,4 +1,5 @@
 {
+  "Automatic (IP region)": "自動（IP の地域）",
   ".": ".",
   "01 · Organize": "01・整理",
   "02 · Find": "02 · 見つけて下さい",
@@ -144,7 +145,7 @@
   "The same design, easier on the eyes at night": "夜に目を見やすく、同じデザイン",
   "This page is missing from the wardrobe": "このページはwardrobeから欠落しています",
   "Three views": "3つのビュー",
-  "To select a language on your first visit, the website asks country.is for the country associated with your IP address. The provider receives the IP address as part of that request. This does not send any data from the Android app. Selecting a language manually saves that choice in your browser and skips future lookups.": "初めてアクセスしたとき、ウェブサイトは表示言語を選ぶため、IPアドレスに対応する国や地域を country.is に問い合わせます。この問い合わせで、サービス提供元にIPアドレスが送信されます。Androidアプリのデータは送信されません。言語を手動で選ぶと、その設定がブラウザーに保存され、次回以降はこの問い合わせを行いません。",
+  "When you open a default-language page in automatic mode, the website asks country.is for the country or region associated with your IP address. The provider receives your IP address with the request. This does not send any data from the Android app. A manual language choice is saved in your browser and skips future lookups. Select Automatic (IP region) in the language menu to restore automatic selection.": "自動モードで既定の言語のページを開くと、ウェブサイトは IP アドレスに対応する国や地域を country.is に問い合わせます。この問い合わせで IP アドレスがサービス提供元に送信されます。Android アプリのデータは送信されません。言語を手動で選ぶと、その設定がブラウザーに保存され、以降は問い合わせを行いません。言語メニューの「自動（IP の地域）」を選ぶと、自動選択に戻ります。",
   "Try-on backgrounds": "バーチャル試着の背景",
   "Try-on: {view}": "バーチャル試着: {view}",
   "Two-column layout with photos in their original proportions": "オリジナルの比率で写真付きの2列レイアウト",

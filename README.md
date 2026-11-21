@@ -34,7 +34,7 @@ Wardrobe is an Android app for organizing clothes, tagging photos with AI, searc
 | `/changelog/` | Changelog with the latest three releases expanded |
 | `/privacy/` | App privacy policy and the website’s language lookup disclosure |
 
-Use `/zh/`, `/zh-hant/`, `/fr/`, `/pt/`, `/es/`, `/de/`, or `/ja/` for Simplified Chinese, Traditional Chinese, French, Portuguese, Spanish, German, or Japanese. English uses the unprefixed paths. The site uses country.is to infer the visitor’s country or region, including Traditional Chinese for Taiwan, Hong Kong, and Macao and Simplified Chinese for mainland China. English is the fallback. The header language menu remembers a manual choice. App screenshots match each page’s language. All locales have static URLs that work without JavaScript.
+Use `/zh/`, `/zh-hant/`, `/fr/`, `/pt/`, `/es/`, `/de/`, or `/ja/` for Simplified Chinese, Traditional Chinese, French, Portuguese, Spanish, German, or Japanese. English uses the unprefixed paths. The site uses country.is to infer the visitor’s country or region, including Traditional Chinese for Taiwan, Hong Kong, and Macao and Simplified Chinese for mainland China. English is the fallback. The header language menu remembers a manual choice. Select **Automatic (IP region)** to resume choosing by IP on visits to unprefixed pages. App screenshots match each page’s language. All locales have static URLs that work without JavaScript.
 
 Shared styles are in `src/styles/global.css`. The site follows the visitor’s color scheme and honors reduced-motion settings for the screenshot gallery.
 

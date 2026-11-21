@@ -23,7 +23,7 @@ const policyLanguage = language === 'zh' || localized ? languages[language].loca
     <article class="wrap narrow prose card">
       <div lang={policyLanguage}><Policy /></div>
       <h2>{t("Website language selection", "网站语言选择")}</h2>
-      <p>{t("To select a language on your first visit, the website asks country.is for the country associated with your IP address. The provider receives the IP address as part of that request. This does not send any data from the Android app. Selecting a language manually saves that choice in your browser and skips future lookups.", "首次访问时，网站会向 country.is 查询访问 IP 所在的国家或地区，以选择显示语言。查询服务会接收到访问 IP。此过程不发送 Android 应用中的数据。手动选择的语言会保存在浏览器中，之后无需再查询。")}</p>
+      <p>{t("When you open a default-language page in automatic mode, the website asks country.is for the country or region associated with your IP address. The provider receives your IP address with the request. This does not send any data from the Android app. A manual language choice is saved in your browser and skips future lookups. Select Automatic (IP region) in the language menu to restore automatic selection.", "在自动模式下打开默认语言页面时，网站会向 country.is 查询访问 IP 所在的国家或地区。查询服务会接收到访问 IP。此过程不发送 Android 应用中的数据。手动选择的语言会保存在浏览器中，之后无需查询。在语言菜单中选择「自动（IP 地区）」可恢复自动切换。")}</p>
       <p><a href="https://country.is/">{t("About country.is", "关于 country.is")}</a></p>
     </article>
   </section>
