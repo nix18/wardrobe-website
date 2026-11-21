@@ -7,7 +7,7 @@ import AiMark from '../components/AiMark.astro'
 import Icon from '../components/Icon.astro'
 import { releases, downloadUrl, formatSize, formatDate, releaseSummary } from '../lib/releases'
 
-import { screens as shots } from '../lib/screens'
+import { screensFor } from '../lib/screens'
 
 import coat from '../assets/photos/coat.jpg'
 import dress from '../assets/photos/dress.jpg'
@@ -19,6 +19,7 @@ import back from '../assets/photos/look2_back.jpg'
 import aiDark from '../assets/photos/ai_dark.jpg'
 
 const { t, base, locale, language } = translations(Astro.url.pathname)
+const shots = screensFor(language)
 
 const all = await releases()
 const latest = all[0]
@@ -111,7 +112,7 @@ const faqs = [
           <Picture src={front} alt="" widths={[360, 720]} sizes="360px" formats={['avif', 'webp']} loading="eager" />
           <AiMark />
         </div>
-        <Phone screen={language === "en" ? shots.wardrobeEnglish : shots.wardrobe} alt="" width={262} eager class="hero-phone reveal" />
+        <Phone screen={shots.wardrobe} alt="" width={262} eager class="hero-phone reveal" />
         <div class="float-card tags reveal" style="--delay: .35s">
           <span class="float-title"><Icon name="sparkle" size={15} />
 {t("AI tagging complete", "AI 识别完成")}</span>
